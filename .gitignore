@@ -1,36 +1,25 @@
-# Portfolio Showcase Mode
-# Goal: keep only root sample files versioned for public GitHub presentation.
-# Tracked files that are already in git must be untracked with:
-# git rm -r --cached . && git add .
+# Portfolio Showcase Strategy
+# Intent: keep the public repository focused on a small root-level sample.
+# Note: .gitignore does not hide files already tracked by Git.
 
-# Ignore everything by default
+# Ignore everything by default.
 /*
 
-# Allow only public showcase files at repository root
+# Allow only showcase essentials at repository root.
 !/.gitignore
 !/README.md
 !/index.html
 !/style.css
 !/script.js
-!/*.html
-!/auth-config.js
-!/BACKEND_AUTH_CONTRACT.md
-!/test-cart-wishlist.sh
 
-# Allow backend source when deploying fullstack flows
-!/backend/
-!/backend/**
-
-# Allow deploy-critical static assets
-!/assets/
-!/assets/data/
-!/assets/data/products.json
-!/assets/images/
-!/assets/images/**
-
-# Common local and generated noise (kept for clarity/documentation)
+# Dependencies and package managers
 node_modules/
 **/node_modules/
+.pnpm-store/
+.npm/
+.yarn/
+
+# Build, cache, coverage, and generated output
 dist/
 build/
 out/
@@ -39,14 +28,19 @@ coverage/
 .parcel-cache/
 .next/
 .nuxt/
+.turbo/
+.vite/
+
+# Temp and backup files
 tmp/
 temp/
 *.tmp
 *.temp
 *.bak
+*.old
+*.orig
 *.swp
 *.swo
-*.orig
 
 # Logs
 *.log
@@ -55,22 +49,22 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Environments and secrets
+# Environment and local config
 .env
 .env.*
 !.env.example
 
-# Databases and local storage
+# Databases and local state
 *.db
 *.sqlite
 *.sqlite3
 
-# Editor/IDE
+# IDE/editor files
 .vscode/
 .idea/
 *.iml
 
-# OS files
+# OS artifacts
 .DS_Store
 Thumbs.db
 Desktop.ini
@@ -82,7 +76,9 @@ Desktop.ini
 *.fig
 *draft*
 *backup*
+*copy*
 
-# Internal folders if used in future
+# Non-essential docs and internal material (if kept locally)
+docs-internal/
 private/
 internal/
