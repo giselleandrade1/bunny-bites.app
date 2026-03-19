@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bunny Bites | Login</title>
+    <meta name="description" content="Acesse sua conta Bunny Bites para continuar sua experiencia." />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="auth-body">
+    <div class="auth-decor" aria-hidden="true">
+        <span class="auth-blob auth-blob-1"></span>
+        <span class="auth-blob auth-blob-2"></span>
+        <span class="auth-blob auth-blob-3"></span>
+        <span class="auth-glyph auth-glyph-1">🐇</span>
+        <span class="auth-glyph auth-glyph-2">🥚</span>
+        <span class="auth-glyph auth-glyph-3">🎀</span>
+    </div>
+
+    <main class="auth-page">
+        <div class="auth-top-link">
+            <a href="index.html" class="btn btn-soft">Voltar para a home</a>
+        </div>
+
+        <p id="authNotice" class="auth-notice">Entre na sua conta para continuar sua experiencia na Bunny Bites.</p>
+
+        <section class="auth-card" id="authCard" aria-label="Login e cadastro Bunny Bites">
+            <div class="forms-zone">
+                <section class="form-panel sign-in-panel">
+                    <form id="signInForm" class="auth-form" novalidate>
+                        <span class="form-kicker">Bunny Bites</span>
+                        <h1>Bem-vinda de volta</h1>
+                        <p class="form-subtitle">Entre para continuar sua experiencia mais doce.</p>
+
+                        <div class="social-strip" aria-label="Acesso social ilustrativo">
+                            <button type="button" class="social-chip" aria-label="Entrar com Google">G</button>
+                            <button type="button" class="social-chip" aria-label="Entrar com Apple">A</button>
+                            <button type="button" class="social-chip" aria-label="Entrar com Facebook">f</button>
+                        </div>
+
+                        <label class="field">
+                            <span>E-mail</span>
+                            <input id="signInEmail" type="email" placeholder="voce@exemplo.com" autocomplete="email"
+                                required />
+                            <small class="field-error" data-error-for="signInEmail"></small>
+                        </label>
+
+                        <label class="field">
+                            <span>Senha</span>
+                            <div class="password-field">
+                                <input id="signInPassword" type="password" placeholder="Digite sua senha" minlength="6"
+                                    autocomplete="current-password" required />
+                                <button type="button" class="password-toggle" data-toggle-for="signInPassword"
+                                    aria-label="Mostrar senha">Mostrar</button>
+                            </div>
+                            <small class="field-error" data-error-for="signInPassword"></small>
+                        </label>
+
+                        <label class="check-row" for="rememberSession">
+                            <input id="rememberSession" type="checkbox" />
+                            <span>Manter sessao neste dispositivo</span>
+                        </label>
+
+                        <a href="#" class="forgot-link">Esqueceu sua senha?</a>
+                        <p id="signInMessage" class="status-message" role="status" aria-live="polite"></p>
+                        <button type="submit" class="btn btn-primary auth-submit">Entrar</button>
+                    </form>
+                </section>
+
+                <section class="form-panel sign-up-panel">
+                    <form id="signUpForm" class="auth-form" novalidate>
+                        <span class="form-kicker">Primeiro acesso</span>
+                        <h1>Crie sua conta</h1>
+                        <p class="form-subtitle">Cadastre-se para explorar delicias encantadoras da Bunny Bites.
+                        </p>
+
+                        <label class="field">
+                            <span>Nome</span>
+                            <input id="signUpName" type="text" placeholder="Seu nome completo" autocomplete="name"
+                                required />
+                            <small class="field-error" data-error-for="signUpName"></small>
+                        </label>
+
+                        <label class="field">
+                            <span>E-mail</span>
+                            <input id="signUpEmail" type="email" placeholder="voce@exemplo.com" autocomplete="email"
+                                required />
+                            <small class="field-error" data-error-for="signUpEmail"></small>
+                        </label>
+
+                        <label class="field">
+                            <span>Senha</span>
+                            <div class="password-field">
+                                <input id="signUpPassword" type="password" placeholder="Minimo 6 caracteres"
+                                    minlength="6" autocomplete="new-password" required />
+                                <button type="button" class="password-toggle" data-toggle-for="signUpPassword"
+                                    aria-label="Mostrar senha">Mostrar</button>
+                            </div>
+                            <div class="password-strength" aria-live="polite">
+                                <div class="strength-bar" id="passwordStrengthBar"></div>
+                                <span id="passwordStrengthText">Forca da senha: fraca</span>
+                            </div>
+                            <small class="password-hint">Use letras maiusculas, minusculas, numero e simbolo.</small>
+                            <small class="field-error" data-error-for="signUpPassword"></small>
+                        </label>
+
+                        <label class="field">
+                            <span>Confirmar senha</span>
+                            <div class="password-field">
+                                <input id="signUpConfirmPassword" type="password" placeholder="Repita sua senha"
+                                    minlength="6" autocomplete="new-password" required />
+                                <button type="button" class="password-toggle" data-toggle-for="signUpConfirmPassword"
+                                    aria-label="Mostrar senha">Mostrar</button>
+                            </div>
+                            <small class="field-error" data-error-for="signUpConfirmPassword"></small>
+                        </label>
+
+                        <label class="check-row" for="acceptTerms">
+                            <input id="acceptTerms" type="checkbox" required />
+                            <span>Concordo com os termos e com a politica de privacidade.</span>
+                        </label>
+                        <small class="field-error" data-error-for="acceptTerms"></small>
+
+                        <p id="signUpMessage" class="status-message" role="status" aria-live="polite"></p>
+                        <button type="submit" class="btn btn-primary auth-submit">Criar conta</button>
+                    </form>
+                </section>
+            </div>
+
+            <aside class="overlay-shell">
+                <div class="overlay-track">
+                    <article class="overlay-panel overlay-left">
+                        <span class="panel-tag">Ja tem uma conta?</span>
+                        <h2>Entre e continue sua experiencia</h2>
+                        <p>Acesse sua conta para acompanhar pedidos, favoritos e ofertas especiais.</p>
+                        <button id="showSignIn" type="button" class="btn btn-outline">Entrar</button>
+                    </article>
+                    <article class="overlay-panel overlay-right">
+                        <span class="panel-tag">Novo por aqui?</span>
+                        <h2>Crie sua conta</h2>
+                        <p>Cadastre-se e descubra uma Pascoa ainda mais especial na Bunny Bites.</p>
+                        <button id="showSignUp" type="button" class="btn btn-outline">Cadastrar</button>
+                    </article>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <script src="auth-config.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
