@@ -1408,6 +1408,24 @@ const setupContactForm = () => {
     });
 };
 
+const setupSmoothAnchorLinks = () => {
+    const links = document.querySelectorAll('a[href^="#"]');
+    if (!links.length) return;
+
+    links.forEach((link) => {
+        link.addEventListener("click", (event) => {
+            const targetId = link.getAttribute("href");
+            if (!targetId || targetId === "#") return;
+
+            const target = document.querySelector(targetId);
+            if (!target) return;
+
+            event.preventDefault();
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+    });
+};
+
 const requestAuthApi = async (path, payload) => {
     const url = buildApiUrl(path);
     if (!url) {
@@ -1993,6 +2011,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     setupMobileMenu();
     setupNewsletter();
     setupContactForm();
+    setupSmoothAnchorLinks();
     setupProtectedDataPages();
     setupCheckoutActions();
     showAuthNotice();

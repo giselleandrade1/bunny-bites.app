@@ -26,6 +26,7 @@ This keeps the portfolio focused, easy to review, and free from internal noise.
 ## Technical Highlights
 
 - Marketing-first storefront layout with modular sections
+- Single-page portfolio navigation for frictionless public review
 - Interactive elements with progressive enhancement principles
 - Form validation and user-feedback handling patterns
 - Responsive grid and typography scaling
