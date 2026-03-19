@@ -1426,6 +1426,48 @@ const setupSmoothAnchorLinks = () => {
     });
 };
 
+const setupImageFallbacks = () => {
+    const images = document.querySelectorAll("img");
+    if (!images.length) return;
+
+    const buildInlinePlaceholder = (label = "Bunny Bites") => {
+        const safeLabel = String(label || "Bunny Bites").slice(0, 40);
+        const svg = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-label="${safeLabel}">
+                <defs>
+                    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#f6eaf3"/>
+                        <stop offset="100%" stop-color="#cfc2df"/>
+                    </linearGradient>
+                </defs>
+                <rect width="1200" height="900" fill="url(#g)"/>
+                <circle cx="1020" cy="150" r="170" fill="#ffffff" fill-opacity="0.26"/>
+                <circle cx="180" cy="760" r="210" fill="#ffffff" fill-opacity="0.24"/>
+                <text x="50%" y="47%" text-anchor="middle" font-family="Avenir, Segoe UI, sans-serif" font-size="68" fill="#5f487b" font-weight="700">Bunny Bites</text>
+                <text x="50%" y="57%" text-anchor="middle" font-family="Avenir, Segoe UI, sans-serif" font-size="34" fill="#6d5a82">${safeLabel}</text>
+            </svg>
+        `;
+
+        return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+    };
+
+    images.forEach((img) => {
+        const fallbackSrc = buildInlinePlaceholder(img.alt || "Imagem do produto");
+
+        const applyFallback = () => {
+            if (img.dataset.fallbackApplied === "true") return;
+            img.dataset.fallbackApplied = "true";
+            img.src = fallbackSrc;
+        };
+
+        img.addEventListener("error", applyFallback);
+
+        if (img.complete && img.naturalWidth === 0) {
+            applyFallback();
+        }
+    });
+};
+
 const requestAuthApi = async (path, payload) => {
     const url = buildApiUrl(path);
     if (!url) {
@@ -2000,6 +2042,7 @@ const setupAuthForms = () => {
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
+    setupImageFallbacks();
     ensureSiteChrome();
     guardProtectedPage();
     await hydrateCatalogGridFromData();
