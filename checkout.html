@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bunny Bites | Checkout</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body data-protected-page="true">
+    <main class="protected-page container">
+        <h1>Checkout</h1>
+        <p>Area protegida para concluir seu pedido com seguranca.</p>
+        <div class="protected-actions">
+            <a class="btn btn-soft" href="cart.html">Voltar ao carrinho</a>
+            <button class="btn btn-primary" data-confirm-order data-protected-target="checkout.html"
+                data-protected-message="Entre para confirmar seu pedido.">Finalizar pedido</button>
+            <a class="btn btn-soft" href="#" data-auth-logout>Sair</a>
+        </div>
+    </main>
+    <script src="script.js"></script>
+</body>
+
+</html>
