@@ -26,16 +26,18 @@
 
             <nav id="primaryNav" class="store-nav" aria-label="Navegacao principal">
                 <a href="index.html" aria-current="page">Inicio</a>
-                <a href="#destaques">Produtos</a>
-                <a href="#ofertas">Ofertas</a>
-                <a href="#sobre">Sobre</a>
-                <a href="#newsletter">Contato</a>
-                <a href="#newsletter">Wishlist</a>
-                <a href="#newsletter">Carrinho</a>
+                <a href="products.html">Produtos</a>
+                <a href="product-details.html">Detalhes</a>
+                <a href="about.html">Sobre</a>
+                <a href="contact.html">Contato</a>
+                <a href="wishlist.html" data-protected-target="wishlist.html"
+                    data-protected-message="Entre na sua conta para salvar favoritos.">Wishlist</a>
+                <a href="cart.html" data-protected-target="cart.html"
+                    data-protected-message="Faca login para acessar seu carrinho.">Carrinho</a>
             </nav>
 
             <div class="header-actions">
-                <a class="btn btn-soft" href="#newsletter">Entrar</a>
+                <a class="btn btn-soft" href="login.html">Entrar</a>
             </div>
         </div>
     </header>
@@ -49,8 +51,8 @@
                     encantadoras em uma experiencia premium.
                 </p>
                 <div class="hero-actions">
-                    <a class="btn btn-primary" href="#destaques">Ver todos os produtos</a>
-                    <a class="btn btn-soft" href="#newsletter">Entrar na conta</a>
+                    <a class="btn btn-primary" href="products.html">Ver todos os produtos</a>
+                    <a class="btn btn-soft" href="login.html">Entrar na conta</a>
                     <span class="badge">Ate 25% OFF</span>
                 </div>
             </div>
@@ -98,8 +100,9 @@
                     <h3>Ovo de Chocolate Classico</h3>
                     <p>R$ 74,90</p>
                     <div class="product-actions">
-                        <a class="btn btn-soft" href="#sobre">Ver detalhes</a>
-                        <a class="btn btn-primary" href="#newsletter">Comprar</a>
+                        <a class="btn btn-soft" href="product-details.html">Ver detalhes</a>
+                        <button class="btn btn-primary" data-protected-target="cart.html"
+                            data-protected-message="Faca login para comprar este produto.">Comprar</button>
                     </div>
                 </article>
                 <article class="product-card">
@@ -108,8 +111,10 @@
                     <h3>Ovo Recheado de Brigadeiro</h3>
                     <p>R$ 99,90</p>
                     <div class="product-actions">
-                        <a class="btn btn-soft" href="#sobre">Ver detalhes</a>
-                        <a class="btn btn-primary" href="#newsletter">Adicionar ao carrinho</a>
+                        <a class="btn btn-soft" href="product-details.html">Ver detalhes</a>
+                        <button class="btn btn-primary" data-protected-target="cart.html"
+                            data-protected-message="Entre para adicionar este item ao carrinho.">Adicionar ao
+                            carrinho</button>
                     </div>
                 </article>
                 <article class="product-card">
@@ -118,8 +123,9 @@
                     <h3>Kit Presente Bunny Bites</h3>
                     <p>R$ 189,90</p>
                     <div class="product-actions">
-                        <a class="btn btn-soft" href="#sobre">Ver detalhes</a>
-                        <a class="btn btn-primary" href="#newsletter">Favoritar</a>
+                        <a class="btn btn-soft" href="product-details.html">Ver detalhes</a>
+                        <button class="btn btn-primary" data-protected-target="wishlist.html"
+                            data-protected-message="Faca login para favoritar produtos.">Favoritar</button>
                     </div>
                 </article>
             </div>
@@ -129,7 +135,7 @@
             <h2 id="offersTitle">Surpreenda quem voce ama nesta Pascoa</h2>
             <p class="abnt-paragraph">Cadastre-se para acessar produtos completos, favoritos e compras em poucos
                 cliques.</p>
-            <a class="btn btn-primary" href="#destaques">Explorar ofertas</a>
+            <a class="btn btn-primary" href="products.html">Explorar ofertas</a>
         </section>
 
         <section id="inspiracao" class="container section-block" aria-labelledby="galleryTitle">
@@ -183,13 +189,14 @@
         <div class="container footer-row">
             <p>© 2026 Bunny Bites. Todos os direitos reservados.</p>
             <div class="footer-links">
-                <a href="#sobre">Sobre</a>
-                <a href="#newsletter">Contato</a>
-                <a href="#newsletter">Minha conta</a>
+                <a href="about.html">Sobre</a>
+                <a href="contact.html">Contato</a>
+                <a href="login.html">Minha conta</a>
             </div>
         </div>
     </footer>
 
+    <script src="auth-config.js"></script>
     <script src="script.js"></script>
 </body>
 

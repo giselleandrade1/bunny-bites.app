@@ -1,16 +1,5 @@
-# Portfolio Showcase Strategy
-# Intent: keep the public repository focused on a small root-level sample.
-# Note: .gitignore does not hide files already tracked by Git.
-
-# Ignore everything by default.
-/*
-
-# Allow only showcase essentials at repository root.
-!/.gitignore
-!/README.md
-!/index.html
-!/style.css
-!/script.js
+# Bunny Bites fullstack deployment mode
+# Keep project files tracked, while ignoring local/runtime noise.
 
 # Dependencies and package managers
 node_modules/
@@ -53,11 +42,14 @@ pnpm-debug.log*
 .env
 .env.*
 !.env.example
+backend/.env
 
 # Databases and local state
 *.db
 *.sqlite
 *.sqlite3
+backend/data/
+!backend/data/.gitkeep
 
 # IDE/editor files
 .vscode/

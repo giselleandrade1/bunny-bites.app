@@ -1,6 +1,6 @@
-# Bunny Bites Showcase
+# Bunny Bites
 
-A curated front-end showcase for a premium seasonal e-commerce concept. This repository is intentionally scoped for portfolio presentation and code readability.
+Fullstack e-commerce experience for Bunny Bites, with static storefront pages and authentication/cart/wishlist/checkout APIs.
 
 ## Project Goal
 
@@ -12,25 +12,21 @@ Demonstrate clean, production-minded front-end practices using plain HTML, CSS, 
 - resilient client-side behavior with defensive guards
 - responsive experience across common viewport sizes
 
-## Public Repository Scope
+## Architecture
 
-This public repository is intentionally minimal. The visible showcase surface is limited to:
-
-- index.html
-- style.css
-- script.js
-- README.md
-
-This keeps the portfolio focused, easy to review, and free from internal noise.
+- Frontend: multi-page static site (HTML, CSS, JS)
+- API: Node.js + Express + JWT
+- Data layer: SQLite (local dev and serverless runtime file)
+- Deployment: Vercel (static pages + serverless API route)
 
 ## Technical Highlights
 
 - Marketing-first storefront layout with modular sections
-- Single-page portfolio navigation for frictionless public review
+- Auth flow with JWT and protected routes
 - Interactive elements with progressive enhancement principles
 - Form validation and user-feedback handling patterns
 - Responsive grid and typography scaling
-- Portfolio-ready code organization and commit hygiene
+- Catalog, cart, wishlist, and checkout interactions
 
 ## Stack
 
@@ -40,19 +36,33 @@ This keeps the portfolio focused, easy to review, and free from internal noise.
 
 ## Run Locally
 
-Option 1:
+1. Install backend dependencies:
+   - cd backend
+   - npm install
+2. Start API:
+   - npm run dev
+3. Open frontend:
+   - open index.html directly or serve root statically
 
-1. Open index.html directly in your browser.
+Default local API URL: http://localhost:4000
 
-Option 2:
+## Vercel Deployment
 
-1. Start any static server in this folder.
-2. Open the served URL in your browser.
+This project is configured to deploy on Vercel as:
 
-## Repository Strategy
+- static pages from repository root
+- serverless API at /api/\* through api/index.js
 
-This project follows a showcase-first Git strategy. Non-essential or internal implementation files are intentionally excluded from public tracking to keep the repository professional for recruiter review.
+### Required Vercel Environment Variables
+
+- JWT_SECRET: strong random secret for token signing
+- CORS_ORIGIN: your Vercel domain (for example, https://your-app.vercel.app)
+- DB_FILE: optional, defaults to /tmp/bunnybites.db on Vercel
+
+### Important Data Note
+
+On serverless environments, /tmp storage is ephemeral. SQLite data may reset between cold starts/redeploys. For durable production data, migrate to managed Postgres/Supabase/Neon.
 
 ## Author Notes
 
-The complete product workspace can include additional integration files, private flows, and backend assets. This public slice is purposely curated to communicate front-end engineering quality in a concise format.
+The current setup is optimized for simple deployment and functional demonstration. If you want persistent production data, the next step is replacing SQLite storage with a managed database service.

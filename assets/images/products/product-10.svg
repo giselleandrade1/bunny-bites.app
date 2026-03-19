@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Bunny Bites product image">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#F6EAF3"/>
+      <stop offset="100%" stop-color="#B4A9D2"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" rx="36" fill="url(#bg)"/>
+  <circle cx="160" cy="140" r="90" fill="#E4D6E9" opacity="0.85"/>
+  <circle cx="650" cy="470" r="130" fill="#CDC7E3" opacity="0.65"/>
+  <rect x="170" y="170" width="460" height="280" rx="38" fill="#FFFFFF" opacity="0.86"/>
+  <ellipse cx="400" cy="290" rx="118" ry="96" fill="#A88DC0" opacity="0.9"/>
+  <ellipse cx="360" cy="260" rx="24" ry="38" fill="#F6EAF3"/>
+  <ellipse cx="440" cy="260" rx="24" ry="38" fill="#F6EAF3"/>
+  <text x="400" y="540" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" fill="#4B3E5E">Bunny Bites</text>
+</svg>
