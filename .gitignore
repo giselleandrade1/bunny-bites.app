@@ -13,6 +13,13 @@
 !/style.css
 !/script.js
 
+# Allow deploy-critical static assets
+!/assets/
+!/assets/data/
+!/assets/data/products.json
+!/assets/images/
+!/assets/images/**
+
 # Common local and generated noise (kept for clarity/documentation)
 node_modules/
 **/node_modules/
