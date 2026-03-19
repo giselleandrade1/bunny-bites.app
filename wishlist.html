@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bunny Bites | Wishlist</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body data-protected-page="true">
+    <main class="protected-page container">
+        <h1>Wishlist</h1>
+        <p>Area protegida para os seus favoritos da Bunny Bites.</p>
+
+        <section class="section-block">
+            <div class="product-grid">
+                <article class="product-card">
+                    <img class="product-media" src="assets/images/products/product-3.jpg" alt="Kit presente na wishlist"
+                        loading="lazy" />
+                    <h3>Kit Presente Bunny Bites</h3>
+                    <p class="price-tag">R$ 189,90</p>
+                </article>
+                <article class="product-card">
+                    <img class="product-media" src="assets/images/products/product-2.jpg" alt="Ovo recheado favorito"
+                        loading="lazy" />
+                    <h3>Ovo Recheado Especial</h3>
+                    <p class="price-tag">R$ 109,90</p>
+                </article>
+            </div>
+        </section>
+
+        <div class="protected-actions">
+            <a class="btn btn-soft" href="products.html">Ver produtos</a>
+            <a class="btn btn-primary" href="cart.html" data-protected-target="cart.html"
+                data-protected-message="Entre para acessar seu carrinho.">Ir para carrinho</a>
+            <a class="btn btn-soft" href="#" data-auth-logout>Sair</a>
+        </div>
+    </main>
+    <script src="auth-config.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

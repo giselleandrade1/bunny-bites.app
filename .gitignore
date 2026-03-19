@@ -12,6 +12,14 @@
 !/index.html
 !/style.css
 !/script.js
+!/*.html
+!/auth-config.js
+!/BACKEND_AUTH_CONTRACT.md
+!/test-cart-wishlist.sh
+
+# Allow backend source when deploying fullstack flows
+!/backend/
+!/backend/**
 
 # Allow deploy-critical static assets
 !/assets/
