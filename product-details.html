@@ -12,14 +12,43 @@
     <main class="protected-page container">
         <h1>Detalhes do Produto</h1>
         <p>Conheca ingredientes, peso e informacoes completas antes de comprar.</p>
+
+        <section class="section-block">
+            <div class="product-grid">
+                <article class="product-card">
+                    <img class="product-media" src="assets/images/products/product-1.jpg"
+                        alt="Ovo de chocolate classico em destaque" loading="lazy" />
+                    <h3>Ovo de Chocolate Classico</h3>
+                    <p class="price-tag">350g • Chocolate ao leite premium • R$ 74,90</p>
+                </article>
+
+                <article class="product-card">
+                    <img class="product-media" src="assets/images/products/product-2.jpg"
+                        alt="Detalhes do recheio de brigadeiro" loading="lazy" />
+                    <h3>Recheio Cremoso</h3>
+                    <p class="price-tag">Brigadeiro artesanal com toque de cacau belga.</p>
+                </article>
+
+                <article class="product-card">
+                    <img class="product-media" src="assets/images/products/product-3.jpg"
+                        alt="Embalagem presenteavel Bunny Bites" loading="lazy" />
+                    <h3>Embalagem Presenteavel</h3>
+                    <p class="price-tag">Laco cetim + cartao especial para presentear.</p>
+                </article>
+            </div>
+        </section>
+
         <div class="protected-actions">
             <a class="btn btn-soft" href="products.html">Voltar aos produtos</a>
             <a class="btn btn-soft" href="wishlist.html" data-protected-target="wishlist.html"
-                data-protected-message="Entre para salvar este produto na sua wishlist.">Favoritar</a>
+                data-protected-message="Entre para salvar este produto na sua wishlist." data-add-to-wishlist="true"
+                data-product-name="Ovo de Chocolate Classico" data-product-price="74.90">Favoritar</a>
             <a class="btn btn-primary" href="cart.html" data-protected-target="cart.html"
-                data-protected-message="Faca login para adicionar este produto ao carrinho.">Adicionar ao carrinho</a>
+                data-protected-message="Faca login para adicionar este produto ao carrinho." data-add-to-cart="true"
+                data-product-name="Ovo de Chocolate Classico" data-product-price="74.90">Adicionar ao carrinho</a>
         </div>
     </main>
+    <script src="auth-config.js"></script>
     <script src="script.js"></script>
 </body>
 

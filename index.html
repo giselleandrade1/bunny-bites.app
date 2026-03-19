@@ -27,6 +27,8 @@
                 <a href="index.html">Inicio</a>
                 <a href="products.html">Produtos</a>
                 <a href="product-details.html">Detalhes</a>
+                <a href="about.html">Sobre</a>
+                <a href="contact.html">Contato</a>
                 <a href="wishlist.html" data-protected-target="wishlist.html"
                     data-protected-message="Entre na sua conta para salvar favoritos.">Wishlist</a>
                 <a href="cart.html" data-protected-target="cart.html"
@@ -53,7 +55,7 @@
                     <span class="badge">Ate 25% OFF</span>
                 </div>
             </div>
-            <div class="hero-art">🍫🥚🎀</div>
+            <div class="hero-art" role="img" aria-label="Colecao premium de chocolates de Pascoa"></div>
         </section>
 
         <section class="container section-block">
@@ -62,10 +64,26 @@
                 <p class="abnt-paragraph">Explore categorias e descubra produtos perfeitos para presentear.</p>
             </div>
             <div class="category-grid">
-                <article class="tile">🥚 Ovos Classicos</article>
-                <article class="tile">🍫 Ovos Recheados</article>
-                <article class="tile">🧺 Cestas</article>
-                <article class="tile">🧁 Sobremesas</article>
+                <article class="tile">
+                    <img class="tile-media" src="assets/images/categories/category-1.jpg"
+                        alt="Ovos de chocolate classicos" loading="lazy" />
+                    <span class="tile-title">Ovos Classicos</span>
+                </article>
+                <article class="tile">
+                    <img class="tile-media" src="assets/images/categories/category-2.jpg"
+                        alt="Ovos recheados e chocolates" loading="lazy" />
+                    <span class="tile-title">Ovos Recheados</span>
+                </article>
+                <article class="tile">
+                    <img class="tile-media" src="assets/images/categories/category-3.jpg"
+                        alt="Cestas de presentes de Pascoa" loading="lazy" />
+                    <span class="tile-title">Cestas</span>
+                </article>
+                <article class="tile">
+                    <img class="tile-media" src="assets/images/categories/category-4.jpg" alt="Sobremesas artesanais"
+                        loading="lazy" />
+                    <span class="tile-title">Sobremesas</span>
+                </article>
             </div>
         </section>
 
@@ -76,7 +94,8 @@
             </div>
             <div class="product-grid">
                 <article class="product-card">
-                    <div class="product-emoji">🥚</div>
+                    <img class="product-media" src="assets/images/products/product-1.jpg"
+                        alt="Ovo de chocolate classico" loading="lazy" />
                     <h3>Ovo de Chocolate Classico</h3>
                     <p>R$ 74,90</p>
                     <div class="product-actions">
@@ -86,7 +105,8 @@
                     </div>
                 </article>
                 <article class="product-card">
-                    <div class="product-emoji">🍫</div>
+                    <img class="product-media" src="assets/images/products/product-2.jpg"
+                        alt="Ovo recheado de brigadeiro" loading="lazy" />
                     <h3>Ovo Recheado de Brigadeiro</h3>
                     <p>R$ 99,90</p>
                     <div class="product-actions">
@@ -97,7 +117,8 @@
                     </div>
                 </article>
                 <article class="product-card">
-                    <div class="product-emoji">🎁</div>
+                    <img class="product-media" src="assets/images/products/product-3.jpg" alt="Kit presente Bunny Bites"
+                        loading="lazy" />
                     <h3>Kit Presente Bunny Bites</h3>
                     <p>R$ 189,90</p>
                     <div class="product-actions">
@@ -116,11 +137,38 @@
             <a class="btn btn-primary" href="products.html">Explorar ofertas</a>
         </section>
 
+        <section class="container section-block">
+            <div class="section-head">
+                <h2>Momentos que inspiram</h2>
+                <p class="abnt-paragraph">Uma galeria emocional com cenas de Pascoa para reforcar a identidade da marca.
+                </p>
+            </div>
+            <div class="gallery-grid">
+                <figure class="gallery-card">
+                    <img src="assets/images/gallery/gallery-1.jpg" alt="Mesa elegante com ovos de chocolate e velas"
+                        loading="lazy" />
+                </figure>
+                <figure class="gallery-card">
+                    <img src="assets/images/gallery/gallery-2.jpg" alt="Composicao premium com chocolates de Pascoa"
+                        loading="lazy" />
+                </figure>
+                <figure class="gallery-card">
+                    <img src="assets/images/gallery/gallery-3.jpg" alt="Chocolate e decoracao floral de Pascoa"
+                        loading="lazy" />
+                </figure>
+                <figure class="gallery-card">
+                    <img src="assets/images/gallery/gallery-4.jpg" alt="Cesta de Pascoa com chocolates artesanais"
+                        loading="lazy" />
+                </figure>
+            </div>
+        </section>
+
         <section class="container newsletter-box section-block">
             <h2>Ganhe um toque extra de docura</h2>
             <p class="abnt-paragraph">Cadastre seu e-mail para receber novidades da Bunny Bites.</p>
             <form id="newsletterForm" class="newsletter-form" novalidate>
-                <input id="newsletterEmail" type="email" placeholder="Digite seu melhor e-mail" required />
+                <input id="newsletterEmail" type="email" placeholder="Digite seu melhor e-mail"
+                    aria-label="E-mail para receber novidades" autocomplete="email" required />
                 <button class="btn btn-primary" type="submit">Quero meu cupom</button>
             </form>
             <p id="newsletterMessage" class="status-text"></p>
@@ -139,10 +187,15 @@
     <footer class="store-footer">
         <div class="container footer-row">
             <p>© 2026 Bunny Bites. Todos os direitos reservados.</p>
-            <a href="login.html">Minha conta</a>
+            <div class="footer-links">
+                <a href="about.html">Sobre</a>
+                <a href="contact.html">Contato</a>
+                <a href="login.html">Minha conta</a>
+            </div>
         </div>
     </footer>
 
+    <script src="auth-config.js"></script>
     <script src="script.js"></script>
 </body>
 
