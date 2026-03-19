@@ -1,36 +1,57 @@
 # Bunny Bites Showcase
 
-Bunny Bites is a front-end e-commerce showcase focused on premium Easter chocolate products.
+A curated front-end showcase for a premium seasonal e-commerce concept. This repository is intentionally scoped for portfolio presentation and code readability.
 
-## Portfolio Scope
+## Project Goal
 
-This public repository is intentionally curated to present a clean and recruiter-friendly sample.
+Demonstrate clean, production-minded front-end practices using plain HTML, CSS, and JavaScript:
 
-Public showcase files:
+- semantic page structure
+- reusable design tokens and layout system
+- accessible interactions and feedback states
+- resilient client-side behavior with defensive guards
+- responsive experience across common viewport sizes
 
-- `index.html`
-- `style.css`
-- `script.js`
-- `README.md`
+## Public Repository Scope
 
-## Highlights
+This public repository is intentionally minimal. The visible showcase surface is limited to:
 
-- Responsive storefront experience
-- Product catalog interactions and filtering
-- Product details flow
-- Cart and wishlist interaction patterns
-- Accessibility-focused UI refinements
+- index.html
+- style.css
+- script.js
+- README.md
 
-## Tech Stack
+This keeps the portfolio focused, easy to review, and free from internal noise.
+
+## Technical Highlights
+
+- Marketing-first storefront layout with modular sections
+- Interactive elements with progressive enhancement principles
+- Form validation and user-feedback handling patterns
+- Responsive grid and typography scaling
+- Portfolio-ready code organization and commit hygiene
+
+## Stack
 
 - HTML5
 - CSS3
-- Vanilla JavaScript
+- Vanilla JavaScript (ES6+)
 
-## Local Preview
+## Run Locally
 
-Open `index.html` in your browser or run a local static server.
+Option 1:
 
-## Notes
+1. Open index.html directly in your browser.
 
-The full production/integration workspace may include private or non-showcase files, but this repository surface is optimized for portfolio presentation quality.
+Option 2:
+
+1. Start any static server in this folder.
+2. Open the served URL in your browser.
+
+## Repository Strategy
+
+This project follows a showcase-first Git strategy. Non-essential or internal implementation files are intentionally excluded from public tracking to keep the repository professional for recruiter review.
+
+## Author Notes
+
+The complete product workspace can include additional integration files, private flows, and backend assets. This public slice is purposely curated to communicate front-end engineering quality in a concise format.
