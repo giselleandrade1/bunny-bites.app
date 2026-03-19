@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    <a class="skip-link" href="#mainContent">Pular para o conteudo principal</a>
     <header class="store-header">
         <div class="container header-row">
             <a href="index.html" class="brand-link">
@@ -24,7 +25,7 @@
                 aria-controls="primaryNav" aria-label="Abrir menu principal">Menu</button>
 
             <nav id="primaryNav" class="store-nav" aria-label="Navegacao principal">
-                <a href="index.html">Inicio</a>
+                <a href="index.html" aria-current="page">Inicio</a>
                 <a href="products.html">Produtos</a>
                 <a href="product-details.html">Detalhes</a>
                 <a href="about.html">Sobre</a>
@@ -41,11 +42,11 @@
         </div>
     </header>
 
-    <main>
-        <section class="hero-section container">
+    <main id="mainContent">
+        <section class="hero-section container" aria-labelledby="heroTitle">
             <div>
                 <p class="kicker">Colecao 2026</p>
-                <h1>A Pascoa mais doce comeca na Bunny Bites</h1>
+                <h1 id="heroTitle">A Pascoa mais doce comeca na Bunny Bites</h1>
                 <p class="abnt-paragraph no-indent">Explore ovos artesanais, presentes delicados e sobremesas
                     encantadoras em uma experiencia premium.
                 </p>
@@ -58,9 +59,9 @@
             <div class="hero-art" role="img" aria-label="Colecao premium de chocolates de Pascoa"></div>
         </section>
 
-        <section class="container section-block">
+        <section id="categorias" class="container section-block" aria-labelledby="categoriesTitle">
             <div class="section-head">
-                <h2>Encontre sua docura favorita</h2>
+                <h2 id="categoriesTitle">Encontre sua docura favorita</h2>
                 <p class="abnt-paragraph">Explore categorias e descubra produtos perfeitos para presentear.</p>
             </div>
             <div class="category-grid">
@@ -87,9 +88,9 @@
             </div>
         </section>
 
-        <section class="container section-block">
+        <section id="destaques" class="container section-block" aria-labelledby="featuredTitle">
             <div class="section-head">
-                <h2>Mais pedidos da Pascoa</h2>
+                <h2 id="featuredTitle">Mais pedidos da Pascoa</h2>
                 <p class="abnt-paragraph">Alguns destaques da nossa vitrine premium.</p>
             </div>
             <div class="product-grid">
@@ -130,16 +131,16 @@
             </div>
         </section>
 
-        <section class="container promo-banner">
-            <h2>Surpreenda quem voce ama nesta Pascoa</h2>
+        <section id="ofertas" class="container promo-banner" aria-labelledby="offersTitle">
+            <h2 id="offersTitle">Surpreenda quem voce ama nesta Pascoa</h2>
             <p class="abnt-paragraph">Cadastre-se para acessar produtos completos, favoritos e compras em poucos
                 cliques.</p>
             <a class="btn btn-primary" href="products.html">Explorar ofertas</a>
         </section>
 
-        <section class="container section-block">
+        <section id="inspiracao" class="container section-block" aria-labelledby="galleryTitle">
             <div class="section-head">
-                <h2>Momentos que inspiram</h2>
+                <h2 id="galleryTitle">Momentos que inspiram</h2>
                 <p class="abnt-paragraph">Uma galeria emocional com cenas de Pascoa para reforcar a identidade da marca.
                 </p>
             </div>
@@ -163,8 +164,8 @@
             </div>
         </section>
 
-        <section class="container newsletter-box section-block">
-            <h2>Ganhe um toque extra de docura</h2>
+        <section id="newsletter" class="container newsletter-box section-block" aria-labelledby="newsletterTitle">
+            <h2 id="newsletterTitle">Ganhe um toque extra de docura</h2>
             <p class="abnt-paragraph">Cadastre seu e-mail para receber novidades da Bunny Bites.</p>
             <form id="newsletterForm" class="newsletter-form" novalidate>
                 <input id="newsletterEmail" type="email" placeholder="Digite seu melhor e-mail"
@@ -174,9 +175,9 @@
             <p id="newsletterMessage" class="status-text"></p>
         </section>
 
-        <section class="container section-block">
+        <section id="sobre" class="container section-block" aria-labelledby="aboutTitle">
             <div class="section-head">
-                <h2>Sobre a Bunny Bites</h2>
+                <h2 id="aboutTitle">Sobre a Bunny Bites</h2>
             </div>
             <p class="about-text abnt-paragraph">A Bunny Bites transforma a Pascoa em uma experiencia delicada,
                 sofisticada e
