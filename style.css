@@ -1471,6 +1471,7 @@ textarea:focus-visible {
 
 @media (max-width: 900px) {
   .hero-section { grid-template-columns: 1fr; }
+  .hero-art { min-height: 260px; }
   .category-grid,
   .product-grid,
   .gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1533,6 +1534,23 @@ textarea:focus-visible {
 }
 
 @media (max-width: 760px) {
+  .hero-section {
+    padding: 1rem;
+  }
+
+  .promo-banner,
+  .newsletter-box,
+  .protected-page {
+    padding: 1rem;
+  }
+
+  .footer-row {
+    min-height: auto;
+    padding: 0.8rem 0;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .auth-page {
     padding-inline: 0.8rem;
   }
@@ -1585,6 +1603,10 @@ textarea:focus-visible {
 }
 
 @media (max-width: 560px) {
+  .container {
+    width: min(1120px, 94vw);
+  }
+
   .category-grid,
   .product-grid,
   .gallery-grid { grid-template-columns: 1fr; }
@@ -1631,6 +1653,7 @@ textarea:focus-visible {
 
   .hero-actions .badge {
     width: fit-content;
+    justify-self: start;
   }
 
   .section-head p,
