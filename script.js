@@ -396,9 +396,11 @@ const setupLogoutActions = () => {
             return;
         }
 
+        let timeoutId;
+
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeoutMs);
+            timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeoutMs);
 
             await fetch(url, {
                 method: "POST",
@@ -409,10 +411,10 @@ const setupLogoutActions = () => {
                 body: JSON.stringify({}),
                 signal: controller.signal
             });
-
-            clearTimeout(timeoutId);
         } catch {
             // Mesmo com falha de rede, a sessao local deve ser encerrada.
+        } finally {
+            clearTimeout(timeoutId);
         }
     };
 
@@ -621,9 +623,11 @@ const requestProtectedApi = async (path, options = {}) => {
         return { ok: false, unauthorized: true, message: "Sessao invalida. Faca login novamente." };
     }
 
+    let timeoutId;
+
     try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeoutMs);
+        timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeoutMs);
 
         const response = await fetch(url, {
             method: options.method || "GET",
@@ -636,7 +640,6 @@ const requestProtectedApi = async (path, options = {}) => {
             signal: controller.signal
         });
 
-        clearTimeout(timeoutId);
         const data = await readJsonSafely(response);
 
         if (response.status === 401) {
@@ -663,6 +666,8 @@ const requestProtectedApi = async (path, options = {}) => {
             unauthorized: false,
             message: "Falha de conexao com o servidor. Tente novamente."
         };
+    } finally {
+        clearTimeout(timeoutId);
     }
 };
 
@@ -741,15 +746,16 @@ const loadCatalogProducts = async () => {
         return catalogProductsCache;
     }
 
+    let timeoutId;
+
     try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeoutMs);
+        timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeoutMs);
         const response = await fetch(CATALOG_DATA_PATH, {
             method: "GET",
             signal: controller.signal,
             cache: "no-store"
         });
-        clearTimeout(timeoutId);
 
         if (!response.ok) {
             return [];
@@ -764,6 +770,8 @@ const loadCatalogProducts = async () => {
         return catalogProductsCache;
     } catch {
         return [];
+    } finally {
+        clearTimeout(timeoutId);
     }
 };
 
@@ -1399,9 +1407,11 @@ const requestAuthApi = async (path, payload) => {
         return { ok: false, skipped: true };
     }
 
+    let timeoutId;
+
     try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeoutMs);
+        timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeoutMs);
 
         const response = await fetch(url, {
             method: "POST",
@@ -1409,7 +1419,6 @@ const requestAuthApi = async (path, payload) => {
             body: JSON.stringify(payload),
             signal: controller.signal
         });
-        clearTimeout(timeoutId);
 
         let data = {};
         try {
@@ -1439,6 +1448,8 @@ const requestAuthApi = async (path, payload) => {
             skipped: false,
             message: "Servidor indisponivel no momento."
         };
+    } finally {
+        clearTimeout(timeoutId);
     }
 };
 
@@ -1738,15 +1749,16 @@ const setupAuthForms = () => {
             };
         }
 
+        let timeoutId;
+
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeoutMs);
+            timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeoutMs);
             const response = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 signal: controller.signal
             });
-            clearTimeout(timeoutId);
 
             const data = await readJsonSafely(response);
             if (!response.ok || !data?.challengeId || !data?.prompt) {
@@ -1761,6 +1773,8 @@ const setupAuthForms = () => {
             };
         } catch {
             return { ok: false, message: "Falha ao carregar captcha." };
+        } finally {
+            clearTimeout(timeoutId);
         }
     };
 
