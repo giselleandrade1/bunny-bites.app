@@ -14,9 +14,6 @@
         <span class="auth-blob auth-blob-1"></span>
         <span class="auth-blob auth-blob-2"></span>
         <span class="auth-blob auth-blob-3"></span>
-        <span class="auth-glyph auth-glyph-1">🐇</span>
-        <span class="auth-glyph auth-glyph-2">🥚</span>
-        <span class="auth-glyph auth-glyph-3">🎀</span>
     </div>
 
     <main class="auth-page">
@@ -24,7 +21,8 @@
             <a href="index.html" class="btn btn-soft">Voltar para a home</a>
         </div>
 
-        <p id="authNotice" class="auth-notice">Entre na sua conta para continuar sua experiencia na Bunny Bites.</p>
+        <p id="authNotice" class="auth-notice">Seu cantinho doce esta te esperando. Entre para continuar sua experiencia
+            na Bunny Bites.</p>
 
         <section class="auth-card" id="authCard" aria-label="Login e cadastro Bunny Bites">
             <div class="forms-zone">
@@ -32,7 +30,9 @@
                     <form id="signInForm" class="auth-form" novalidate>
                         <span class="form-kicker">Bunny Bites</span>
                         <h1>Bem-vinda de volta</h1>
-                        <p class="form-subtitle">Entre para continuar sua experiencia mais doce.</p>
+                        <p class="form-subtitle">Que bom ter voce de volta. Em segundos, sua cesta, favoritos e pedidos
+                            ficam ao seu alcance.</p>
+                        <p class="form-security-note">Conexao protegida para manter sua conta segura.</p>
 
                         <div class="social-strip" aria-label="Acesso social ilustrativo">
                             <button type="button" class="social-chip" aria-label="Entrar com Google">G</button>
@@ -50,11 +50,12 @@
                         <label class="field">
                             <span>Senha</span>
                             <div class="password-field">
-                                <input id="signInPassword" type="password" placeholder="Digite sua senha" minlength="6"
+                                <input id="signInPassword" type="password" placeholder="Digite sua senha" minlength="8"
                                     autocomplete="current-password" required />
                                 <button type="button" class="password-toggle" data-toggle-for="signInPassword"
                                     aria-label="Mostrar senha">Mostrar</button>
                             </div>
+                            <small class="caps-lock-warning" data-caps-for="signInPassword"></small>
                             <small class="field-error" data-error-for="signInPassword"></small>
                         </label>
 
@@ -64,58 +65,101 @@
                         </label>
 
                         <a href="#" class="forgot-link">Esqueceu sua senha?</a>
+
+                        <div class="captcha-box" aria-live="polite">
+                            <p class="captcha-label">Verificacao anti-robo</p>
+                            <p class="captcha-prompt" id="signInCaptchaPrompt">Carregando desafio...</p>
+                            <input id="signInCaptchaAnswer" type="text" inputmode="numeric"
+                                placeholder="Digite o resultado" autocomplete="off" required />
+                            <input id="signInCaptchaId" type="hidden" />
+                            <small class="field-error" data-error-for="signInCaptchaAnswer"></small>
+                        </div>
+
                         <p id="signInMessage" class="status-message" role="status" aria-live="polite"></p>
-                        <button type="submit" class="btn btn-primary auth-submit">Entrar</button>
+                        <button type="submit" class="btn btn-primary auth-submit">
+                            <span class="btn-label">Entrar</span>
+                        </button>
                     </form>
                 </section>
 
                 <section class="form-panel sign-up-panel">
-                    <form id="signUpForm" class="auth-form" novalidate>
+                    <form id="signUpForm" class="auth-form signup-form" novalidate>
                         <span class="form-kicker">Primeiro acesso</span>
                         <h1>Crie sua conta</h1>
-                        <p class="form-subtitle">Cadastre-se para explorar delicias encantadoras da Bunny Bites.
+                        <p class="form-subtitle">Crie sua conta para acompanhar pedidos, salvar favoritos e receber
+                            ofertas
+                            especiais da Bunny Bites.
                         </p>
+                        <p class="form-security-note">Seu cadastro e protegido e usado apenas para sua experiencia de
+                            compra.</p>
 
-                        <label class="field">
-                            <span>Nome</span>
-                            <input id="signUpName" type="text" placeholder="Seu nome completo" autocomplete="name"
-                                required />
-                            <small class="field-error" data-error-for="signUpName"></small>
-                        </label>
+                        <p class="signup-stage">Etapa 1 de 2: dados da conta</p>
 
-                        <label class="field">
-                            <span>E-mail</span>
-                            <input id="signUpEmail" type="email" placeholder="voce@exemplo.com" autocomplete="email"
-                                required />
-                            <small class="field-error" data-error-for="signUpEmail"></small>
-                        </label>
+                        <div class="form-group">
+                            <p class="form-group-title">Seus dados</p>
 
-                        <label class="field">
-                            <span>Senha</span>
-                            <div class="password-field">
-                                <input id="signUpPassword" type="password" placeholder="Minimo 6 caracteres"
-                                    minlength="6" autocomplete="new-password" required />
-                                <button type="button" class="password-toggle" data-toggle-for="signUpPassword"
-                                    aria-label="Mostrar senha">Mostrar</button>
-                            </div>
-                            <div class="password-strength" aria-live="polite">
-                                <div class="strength-bar" id="passwordStrengthBar"></div>
-                                <span id="passwordStrengthText">Forca da senha: fraca</span>
-                            </div>
-                            <small class="password-hint">Use letras maiusculas, minusculas, numero e simbolo.</small>
-                            <small class="field-error" data-error-for="signUpPassword"></small>
-                        </label>
+                            <label class="field">
+                                <span>Nome</span>
+                                <input id="signUpName" type="text" placeholder="Seu nome completo" autocomplete="name"
+                                    required />
+                                <small class="field-error" data-error-for="signUpName"></small>
+                            </label>
 
-                        <label class="field">
-                            <span>Confirmar senha</span>
-                            <div class="password-field">
-                                <input id="signUpConfirmPassword" type="password" placeholder="Repita sua senha"
-                                    minlength="6" autocomplete="new-password" required />
-                                <button type="button" class="password-toggle" data-toggle-for="signUpConfirmPassword"
-                                    aria-label="Mostrar senha">Mostrar</button>
-                            </div>
-                            <small class="field-error" data-error-for="signUpConfirmPassword"></small>
-                        </label>
+                            <label class="field">
+                                <span>E-mail</span>
+                                <input id="signUpEmail" type="email" placeholder="voce@exemplo.com" autocomplete="email"
+                                    inputmode="email" spellcheck="false" required />
+                                <small class="field-error" data-error-for="signUpEmail"></small>
+                            </label>
+
+                            <label class="field">
+                                <span>Confirmar e-mail</span>
+                                <input id="signUpConfirmEmail" type="email" placeholder="Repita seu e-mail"
+                                    autocomplete="email" inputmode="email" spellcheck="false" required />
+                                <small class="field-error" data-error-for="signUpConfirmEmail"></small>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <p class="form-group-title">Protecao da conta</p>
+
+                            <label class="field">
+                                <span>Senha</span>
+                                <div class="password-field">
+                                    <input id="signUpPassword" type="password" placeholder="Minimo 8 caracteres"
+                                        minlength="8" autocomplete="new-password" required />
+                                    <button type="button" class="password-toggle" data-toggle-for="signUpPassword"
+                                        aria-label="Mostrar senha">Mostrar</button>
+                                </div>
+                                <small class="caps-lock-warning" data-caps-for="signUpPassword"></small>
+                                <div class="password-strength" aria-live="polite">
+                                    <div class="strength-bar" id="passwordStrengthBar"></div>
+                                    <span id="passwordStrengthText">Forca da senha: fraca</span>
+                                </div>
+                                <ul class="password-rules" id="passwordRules" aria-label="Regras da senha">
+                                    <li data-rule="length">Pelo menos 8 caracteres</li>
+                                    <li data-rule="upperLower">Letras maiusculas e minusculas</li>
+                                    <li data-rule="number">Pelo menos 1 numero</li>
+                                    <li data-rule="symbol">Pelo menos 1 simbolo</li>
+                                </ul>
+                                <small class="password-hint">Use letras maiusculas, minusculas, numero e
+                                    simbolo.</small>
+                                <small class="field-error" data-error-for="signUpPassword"></small>
+                            </label>
+
+                            <label class="field">
+                                <span>Confirmar senha</span>
+                                <div class="password-field">
+                                    <input id="signUpConfirmPassword" type="password" placeholder="Repita sua senha"
+                                        minlength="8" autocomplete="new-password" required />
+                                    <button type="button" class="password-toggle"
+                                        data-toggle-for="signUpConfirmPassword"
+                                        aria-label="Mostrar senha">Mostrar</button>
+                                </div>
+                                <small class="caps-lock-warning" data-caps-for="signUpConfirmPassword"></small>
+                                <small class="field-error" data-error-for="signUpConfirmPassword"></small>
+                            </label>
+                        </div>
 
                         <label class="check-row" for="acceptTerms">
                             <input id="acceptTerms" type="checkbox" required />
@@ -123,8 +167,33 @@
                         </label>
                         <small class="field-error" data-error-for="acceptTerms"></small>
 
+                        <label class="check-row" for="marketingOptIn">
+                            <input id="marketingOptIn" type="checkbox" />
+                            <span>Quero receber novidades, cupons e lancamentos por e-mail.</span>
+                        </label>
+
+                        <div class="signup-progress" aria-live="polite">
+                            <div class="signup-progress-bar" id="signUpProgressBar"></div>
+                            <span id="signUpProgressText">Cadastro concluido: 0%</span>
+                        </div>
+
+                        <div class="captcha-box" aria-live="polite">
+                            <p class="captcha-label">Verificacao anti-robo</p>
+                            <p class="captcha-prompt" id="signUpCaptchaPrompt">Carregando desafio...</p>
+                            <input id="signUpCaptchaAnswer" type="text" inputmode="numeric"
+                                placeholder="Digite o resultado" autocomplete="off" required />
+                            <input id="signUpCaptchaId" type="hidden" />
+                            <small class="field-error" data-error-for="signUpCaptchaAnswer"></small>
+                        </div>
+
                         <p id="signUpMessage" class="status-message" role="status" aria-live="polite"></p>
-                        <button type="submit" class="btn btn-primary auth-submit">Criar conta</button>
+                        <button type="submit" class="btn btn-primary auth-submit">
+                            <span class="btn-label">Criar conta</span>
+                        </button>
+                        <p class="inline-switch">Ja tem conta?
+                            <button type="button" class="inline-switch-btn" data-switch-mode="signin">Entrar
+                                agora</button>
+                        </p>
                     </form>
                 </section>
             </div>
@@ -133,14 +202,14 @@
                 <div class="overlay-track">
                     <article class="overlay-panel overlay-left">
                         <span class="panel-tag">Ja tem uma conta?</span>
-                        <h2>Entre e continue sua experiencia</h2>
-                        <p>Acesse sua conta para acompanhar pedidos, favoritos e ofertas especiais.</p>
+                        <h2>Entre e continue de onde parou</h2>
+                        <p>Volte para seus favoritos, acompanhe pedidos e aproveite ofertas feitas para voce.</p>
                         <button id="showSignIn" type="button" class="btn btn-outline">Entrar</button>
                     </article>
                     <article class="overlay-panel overlay-right">
                         <span class="panel-tag">Novo por aqui?</span>
                         <h2>Crie sua conta</h2>
-                        <p>Cadastre-se e descubra uma Pascoa ainda mais especial na Bunny Bites.</p>
+                        <p>Cadastre-se em poucos passos e descubra um universo doce, delicado e surpreendente.</p>
                         <button id="showSignUp" type="button" class="btn btn-outline">Cadastrar</button>
                     </article>
                 </div>
