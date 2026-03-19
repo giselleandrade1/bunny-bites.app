@@ -9,6 +9,13 @@
   --text-soft: #61586f;
   --success: #4f7f6b;
   --error: #a14f76;
+  --surface-plain: #ffffff;
+  --surface-card: rgba(255, 255, 255, 0.86);
+  --surface-soft: rgba(255, 255, 255, 0.92);
+  --surface-glass: rgba(255, 255, 255, 0.75);
+  --border-soft: rgba(168, 141, 192, 0.24);
+  --border-strong: rgba(168, 141, 192, 0.4);
+  --focus-ring: #5f487b;
 
   --radius-xl: 30px;
   --radius-lg: 20px;
@@ -130,8 +137,8 @@ input {
 
 .btn-soft {
   color: var(--text-strong);
-  background: #fff;
-  border: 1px solid rgba(168, 141, 192, 0.4);
+  background: var(--surface-plain);
+  border: 1px solid var(--border-strong);
 }
 
 .btn-soft:hover {
@@ -174,7 +181,7 @@ input {
   top: 0;
   z-index: 20;
   background: rgba(246, 234, 243, 0.85);
-  border-bottom: 1px solid rgba(168, 141, 192, 0.24);
+  border-bottom: 1px solid var(--border-soft);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 }
@@ -217,7 +224,7 @@ input {
 .menu-toggle {
   display: none;
   border: 1px solid rgba(168, 141, 192, 0.45);
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--surface-soft);
   color: var(--text-strong);
   border-radius: var(--radius-pill);
   min-height: 40px;
@@ -235,8 +242,8 @@ input {
 }
 
 .store-nav a:hover {
-  border-color: rgba(168, 141, 192, 0.35);
-  background: rgba(255, 255, 255, 0.75);
+  border-color: var(--border-soft);
+  background: var(--surface-glass);
 }
 
 .header-actions {
@@ -248,7 +255,7 @@ input {
   margin-top: var(--space-4);
   border-radius: var(--radius-xl);
   background: linear-gradient(140deg, rgba(255, 255, 255, 0.86), rgba(228, 214, 233, 0.72));
-  border: 1px solid rgba(168, 141, 192, 0.2);
+  border: 1px solid var(--border-soft);
   box-shadow: var(--shadow-main);
   padding: clamp(1rem, 2.5vw, 2rem);
   display: grid;
@@ -343,8 +350,8 @@ input {
 .tile,
 .product-card {
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(168, 141, 192, 0.2);
-  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid var(--border-soft);
+  background: var(--surface-card);
   box-shadow: var(--shadow-soft);
 }
 
@@ -490,7 +497,7 @@ input {
 .protected-page {
   margin-top: var(--space-5);
   border-radius: var(--radius-xl);
-  border: 1px solid rgba(168, 141, 192, 0.24);
+  border: 1px solid var(--border-soft);
   background: rgba(255, 255, 255, 0.88);
   box-shadow: var(--shadow-main);
   padding: var(--space-4);
