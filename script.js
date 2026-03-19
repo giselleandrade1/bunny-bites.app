@@ -383,6 +383,13 @@ const setupMobileMenu = () => {
         if (nav.contains(event.target) || toggle.contains(event.target)) return;
         closeMenu();
     });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (!nav.classList.contains("is-open")) return;
+        closeMenu();
+        toggle.focus();
+    });
 };
 
 const setupLogoutActions = () => {

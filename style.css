@@ -93,9 +93,38 @@ a {
   color: inherit;
 }
 
+.skip-link {
+  position: fixed;
+  top: 0.6rem;
+  left: 0.6rem;
+  z-index: 60;
+  transform: translateY(-150%);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-plain);
+  color: var(--text-strong);
+  padding: 0.48rem 0.88rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-soft);
+  transition: transform 180ms var(--ease-smooth);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
 button,
 input {
   font: inherit;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .container {
