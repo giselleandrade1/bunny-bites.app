@@ -9,13 +9,16 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
+import pg from "pg";
 
 dotenv.config();
 
 const PORT = Number(process.env.PORT || 4000);
 const JWT_SECRET = process.env.JWT_SECRET || "change-this-secret-in-production";
 const CORS_ORIGIN = process.env.CORS_ORIGIN || "*";
+const DB_PROVIDER = (process.env.DB_PROVIDER || (process.env.DATABASE_URL ? "postgres" : "sqlite")).toLowerCase();
 const DB_FILE = process.env.DB_FILE || (process.env.VERCEL ? "/tmp/bunnybites.db" : "./data/bunnybites.db");
+const DATABASE_URL = process.env.DATABASE_URL || "";
 
 const app = express();
 app.use(express.json());
@@ -101,7 +104,54 @@ const createToken = (user) => jwt.sign(
 );
 
 let db;
+let pgPool;
 let dbInitPromise;
+
+const isPostgres = () => DB_PROVIDER === "postgres";
+
+const toPgQuery = (query = "") => {
+    let index = 0;
+    return query.replace(/\?/g, () => {
+        index += 1;
+        return `$${index}`;
+    });
+};
+
+const dbExec = async (query) => {
+    if (isPostgres()) {
+        await pgPool.query(query);
+        return;
+    }
+    await db.exec(query);
+};
+
+const dbGet = async (query, params = []) => {
+    if (isPostgres()) {
+        const result = await pgPool.query(toPgQuery(query), params);
+        return result.rows[0] || undefined;
+    }
+    return db.get(query, params);
+};
+
+const dbAll = async (query, params = []) => {
+    if (isPostgres()) {
+        const result = await pgPool.query(toPgQuery(query), params);
+        return result.rows;
+    }
+    return db.all(query, params);
+};
+
+const dbRun = async (query, params = []) => {
+    if (isPostgres()) {
+        const result = await pgPool.query(toPgQuery(query), params);
+        const rowWithId = result.rows.find((row) => Object.prototype.hasOwnProperty.call(row, "id"));
+        return {
+            changes: Number(result.rowCount) || 0,
+            lastID: rowWithId ? Number(rowWithId.id) : undefined
+        };
+    }
+    return db.run(query, params);
+};
 
 const ensureDbReady = async () => {
     if (db) return;
@@ -127,23 +177,24 @@ app.use(async (_req, _res, next) => {
 
 const cleanupRevokedTokens = async () => {
     const nowInSeconds = Math.floor(Date.now() / 1000);
-    await db.run("DELETE FROM revoked_tokens WHERE expires_at <= ?", [nowInSeconds]);
+    await dbRun("DELETE FROM revoked_tokens WHERE expires_at <= ?", [nowInSeconds]);
 };
 
 const isTokenRevoked = async (jti) => {
     if (!jti) return true;
     await cleanupRevokedTokens();
-    const revoked = await db.get("SELECT jti FROM revoked_tokens WHERE jti = ?", [jti]);
+    const revoked = await dbGet("SELECT jti FROM revoked_tokens WHERE jti = ?", [jti]);
     return Boolean(revoked);
 };
 
 const revokeToken = async ({ jti, exp }) => {
     if (!jti || !Number.isFinite(exp)) return;
 
-    await db.run(
-        "INSERT OR REPLACE INTO revoked_tokens (jti, expires_at) VALUES (?, ?)",
-        [jti, exp]
-    );
+    const query = isPostgres()
+        ? "INSERT INTO revoked_tokens (jti, expires_at) VALUES (?, ?) ON CONFLICT (jti) DO UPDATE SET expires_at = EXCLUDED.expires_at"
+        : "INSERT OR REPLACE INTO revoked_tokens (jti, expires_at) VALUES (?, ?)";
+
+    await dbRun(query, [jti, exp]);
 };
 
 const requireAuth = async (req, res, next) => {
@@ -172,59 +223,117 @@ const requireAuth = async (req, res, next) => {
 };
 
 const initDb = async () => {
+    if (isPostgres()) {
+        if (!DATABASE_URL) {
+            throw new Error("DATABASE_URL e obrigatoria quando DB_PROVIDER=postgres.");
+        }
+
+        pgPool = new pg.Pool({
+            connectionString: DATABASE_URL,
+            ssl: DATABASE_URL.includes("localhost") ? false : { rejectUnauthorized: false }
+        });
+
+        await dbExec(`
+            CREATE TABLE IF NOT EXISTS users (
+              id SERIAL PRIMARY KEY,
+              name TEXT NOT NULL,
+              email TEXT NOT NULL UNIQUE,
+              password_hash TEXT NOT NULL,
+              created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS revoked_tokens (
+              jti TEXT PRIMARY KEY,
+              expires_at BIGINT NOT NULL,
+              revoked_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS user_cart_items (
+              id SERIAL PRIMARY KEY,
+              user_id INTEGER NOT NULL REFERENCES users(id),
+              product_name TEXT NOT NULL,
+              product_price NUMERIC NOT NULL,
+              quantity INTEGER NOT NULL DEFAULT 1,
+              created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+              UNIQUE(user_id, product_name)
+            );
+
+            CREATE TABLE IF NOT EXISTS user_wishlist_items (
+              id SERIAL PRIMARY KEY,
+              user_id INTEGER NOT NULL REFERENCES users(id),
+              product_name TEXT NOT NULL,
+              product_price NUMERIC NOT NULL,
+              created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+              UNIQUE(user_id, product_name)
+            );
+
+            CREATE TABLE IF NOT EXISTS orders (
+              id SERIAL PRIMARY KEY,
+              user_id INTEGER NOT NULL REFERENCES users(id),
+              order_id TEXT NOT NULL UNIQUE,
+              total_price NUMERIC NOT NULL,
+              items_count INTEGER NOT NULL,
+              status TEXT NOT NULL DEFAULT 'completed',
+              created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+            );
+        `);
+
+        return;
+    }
+
     ensureDir(DB_FILE);
     db = await open({
         filename: DB_FILE,
         driver: sqlite3.Database
     });
 
-    await db.exec(`
-    CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      email TEXT NOT NULL UNIQUE,
-      password_hash TEXT NOT NULL,
-      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-    );
+    await dbExec(`
+        CREATE TABLE IF NOT EXISTS users (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          email TEXT NOT NULL UNIQUE,
+          password_hash TEXT NOT NULL,
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
 
-    CREATE TABLE IF NOT EXISTS revoked_tokens (
-      jti TEXT PRIMARY KEY,
-      expires_at INTEGER NOT NULL,
-      revoked_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-    );
+        CREATE TABLE IF NOT EXISTS revoked_tokens (
+          jti TEXT PRIMARY KEY,
+          expires_at INTEGER NOT NULL,
+          revoked_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
 
-    CREATE TABLE IF NOT EXISTS user_cart_items (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER NOT NULL,
-      product_name TEXT NOT NULL,
-      product_price REAL NOT NULL,
-      quantity INTEGER NOT NULL DEFAULT 1,
-      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (user_id) REFERENCES users(id),
-      UNIQUE(user_id, product_name)
-    );
+        CREATE TABLE IF NOT EXISTS user_cart_items (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id INTEGER NOT NULL,
+          product_name TEXT NOT NULL,
+          product_price REAL NOT NULL,
+          quantity INTEGER NOT NULL DEFAULT 1,
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (user_id) REFERENCES users(id),
+          UNIQUE(user_id, product_name)
+        );
 
-    CREATE TABLE IF NOT EXISTS user_wishlist_items (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER NOT NULL,
-      product_name TEXT NOT NULL,
-      product_price REAL NOT NULL,
-      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (user_id) REFERENCES users(id),
-      UNIQUE(user_id, product_name)
-    );
+        CREATE TABLE IF NOT EXISTS user_wishlist_items (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id INTEGER NOT NULL,
+          product_name TEXT NOT NULL,
+          product_price REAL NOT NULL,
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (user_id) REFERENCES users(id),
+          UNIQUE(user_id, product_name)
+        );
 
-    CREATE TABLE IF NOT EXISTS orders (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER NOT NULL,
-      order_id TEXT NOT NULL UNIQUE,
-      total_price REAL NOT NULL,
-      items_count INTEGER NOT NULL,
-      status TEXT NOT NULL DEFAULT 'completed',
-      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (user_id) REFERENCES users(id)
-    );
-  `);
+        CREATE TABLE IF NOT EXISTS orders (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id INTEGER NOT NULL,
+          order_id TEXT NOT NULL UNIQUE,
+          total_price REAL NOT NULL,
+          items_count INTEGER NOT NULL,
+          status TEXT NOT NULL DEFAULT 'completed',
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+    `);
 };
 
 app.get("/api/health", (_req, res) => {
@@ -269,7 +378,7 @@ app.post("/api/auth/register", async (req, res) => {
             return res.status(422).json({ success: false, message: captchaValidation.message });
         }
 
-        const existingUser = await db.get("SELECT id FROM users WHERE email = ?", [email]);
+        const existingUser = await dbGet("SELECT id FROM users WHERE email = ?", [email]);
         if (existingUser) {
             return res.status(409).json({
                 success: false,
@@ -278,10 +387,11 @@ app.post("/api/auth/register", async (req, res) => {
         }
 
         const passwordHash = await bcrypt.hash(password, 12);
-        const result = await db.run(
-            "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
-            [name, email, passwordHash]
-        );
+        const registerQuery = isPostgres()
+            ? "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?) RETURNING id"
+            : "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)";
+
+        const result = await dbRun(registerQuery, [name, email, passwordHash]);
 
         const user = { id: result.lastID, name, email };
         const token = createToken(user);
@@ -313,7 +423,7 @@ app.post("/api/auth/login", async (req, res) => {
             return res.status(422).json({ success: false, message: captchaValidation.message });
         }
 
-        const user = await db.get(
+        const user = await dbGet(
             "SELECT id, name, email, password_hash FROM users WHERE email = ?",
             [email]
         );
@@ -359,7 +469,7 @@ app.post("/api/auth/logout", requireAuth, async (req, res) => {
 app.get("/api/cart", requireAuth, async (req, res) => {
     try {
         const userId = req.auth.payload.sub;
-        const items = await db.all(
+        const items = await dbAll(
             `SELECT id, product_name as name, product_price as price, quantity 
              FROM user_cart_items 
              WHERE user_id = ? 
@@ -391,21 +501,21 @@ app.post("/api/cart/add", requireAuth, async (req, res) => {
             });
         }
 
-        const existingItem = await db.get(
+        const existingItem = await dbGet(
             `SELECT id, quantity FROM user_cart_items 
              WHERE user_id = ? AND product_name = ?`,
             [userId, productName]
         );
 
         if (existingItem) {
-            await db.run(
+            await dbRun(
                 `UPDATE user_cart_items 
                  SET quantity = quantity + ? 
                  WHERE id = ?`,
                 [quantity, existingItem.id]
             );
         } else {
-            await db.run(
+            await dbRun(
                 `INSERT INTO user_cart_items (user_id, product_name, product_price, quantity) 
                  VALUES (?, ?, ?, ?)`,
                 [userId, productName, productPrice, quantity]
@@ -426,7 +536,7 @@ app.delete("/api/cart/remove/:itemId", requireAuth, async (req, res) => {
         const userId = req.auth.payload.sub;
         const itemId = parseInt(req.params.itemId);
 
-        const result = await db.run(
+        const result = await dbRun(
             `DELETE FROM user_cart_items 
              WHERE id = ? AND user_id = ?`,
             [itemId, userId]
@@ -451,7 +561,7 @@ app.delete("/api/cart/remove/:itemId", requireAuth, async (req, res) => {
 app.get("/api/wishlist", requireAuth, async (req, res) => {
     try {
         const userId = req.auth.payload.sub;
-        const items = await db.all(
+        const items = await dbAll(
             `SELECT id, product_name as name, product_price as price 
              FROM user_wishlist_items 
              WHERE user_id = ? 
@@ -482,7 +592,7 @@ app.post("/api/wishlist/add", requireAuth, async (req, res) => {
             });
         }
 
-        const existingItem = await db.get(
+        const existingItem = await dbGet(
             `SELECT id FROM user_wishlist_items 
              WHERE user_id = ? AND product_name = ?`,
             [userId, productName]
@@ -495,7 +605,7 @@ app.post("/api/wishlist/add", requireAuth, async (req, res) => {
             });
         }
 
-        await db.run(
+        await dbRun(
             `INSERT INTO user_wishlist_items (user_id, product_name, product_price) 
              VALUES (?, ?, ?)`,
             [userId, productName, productPrice]
@@ -515,7 +625,7 @@ app.delete("/api/wishlist/remove/:itemId", requireAuth, async (req, res) => {
         const userId = req.auth.payload.sub;
         const itemId = parseInt(req.params.itemId);
 
-        const result = await db.run(
+        const result = await dbRun(
             `DELETE FROM user_wishlist_items 
              WHERE id = ? AND user_id = ?`,
             [itemId, userId]
@@ -555,14 +665,14 @@ app.post("/api/checkout", requireAuth, async (req, res) => {
         }
 
         const orderId = `BB-${Date.now()}`;
-        await db.run(
+        await dbRun(
             `INSERT INTO orders (user_id, order_id, total_price, items_count, status) 
              VALUES (?, ?, ?, ?, 'completed')`,
             [userId, orderId, totalPrice, items.length]
         );
 
         // Clear cart after successful checkout
-        await db.run(
+        await dbRun(
             `DELETE FROM user_cart_items WHERE user_id = ?`,
             [userId]
         );

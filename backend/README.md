@@ -1,6 +1,6 @@
 # Bunny Bites Auth Backend
 
-API de autenticacao com Node.js + Express + SQLite para cadastro e login reais.
+API de autenticacao com Node.js + Express com suporte a SQLite (local) e PostgreSQL (producao).
 
 ## Recursos
 
@@ -37,8 +37,9 @@ A API sobe por padrao em `http://localhost:4000`.
 
 ## Banco de dados
 
-- Arquivo local: `backend/data/bunnybites.db`
-- A tabela `users` e criada automaticamente no primeiro start.
+- Local (padrao): SQLite em `backend/data/bunnybites.db`
+- Producao recomendada: PostgreSQL com `DB_PROVIDER=postgres` e `DATABASE_URL`
+- As tabelas sao criadas automaticamente no primeiro start.
 
 ## Observacoes de seguranca
 

@@ -16,7 +16,7 @@ Demonstrate clean, production-minded front-end practices using plain HTML, CSS, 
 
 - Frontend: multi-page static site (HTML, CSS, JS)
 - API: Node.js + Express + JWT
-- Data layer: SQLite (local dev and serverless runtime file)
+- Data layer: SQLite (local) and PostgreSQL (production-ready)
 - Deployment: Vercel (static pages + serverless API route)
 
 ## Technical Highlights
@@ -57,11 +57,17 @@ This project is configured to deploy on Vercel as:
 
 - JWT_SECRET: strong random secret for token signing
 - CORS_ORIGIN: your Vercel domain (for example, https://your-app.vercel.app)
-- DB_FILE: optional, defaults to /tmp/bunnybites.db on Vercel
+- DB_PROVIDER: postgres
+- DATABASE_URL: managed PostgreSQL connection string (Neon/Supabase/Render/Railway)
 
-### Important Data Note
+### Local Development Variables
 
-On serverless environments, /tmp storage is ephemeral. SQLite data may reset between cold starts/redeploys. For durable production data, migrate to managed Postgres/Supabase/Neon.
+- DB_PROVIDER=sqlite
+- DB_FILE=./data/bunnybites.db
+
+### Data Persistence Note
+
+For production, use PostgreSQL via DATABASE_URL to keep users/cart/orders persistent across deploys and cold starts.
 
 ## Author Notes
 
