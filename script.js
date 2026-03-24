@@ -369,7 +369,23 @@ const setupMobileMenu = () => {
         toggle.setAttribute("aria-expanded", "false");
     };
 
+    const syncMenuMode = () => {
+        const shouldCollapse = window.matchMedia("(max-width: 900px)").matches;
+        if (shouldCollapse) {
+            nav.classList.add("is-collapsible");
+            closeMenu();
+            return;
+        }
+
+        nav.classList.remove("is-collapsible", "is-open");
+        toggle.setAttribute("aria-expanded", "false");
+    };
+
+    syncMenuMode();
+    window.addEventListener("resize", syncMenuMode);
+
     toggle.addEventListener("click", () => {
+        if (!nav.classList.contains("is-collapsible")) return;
         const isOpen = nav.classList.toggle("is-open");
         toggle.setAttribute("aria-expanded", String(isOpen));
     });

@@ -47,6 +47,8 @@ html,
 body {
   margin: 0;
   padding: 0;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -127,6 +129,13 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
+img,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
 .container {
   width: min(1120px, 92vw);
   margin-inline: auto;
@@ -138,10 +147,12 @@ textarea:focus-visible {
   justify-content: center;
   border: 0;
   border-radius: var(--radius-pill);
+  max-width: 100%;
   min-height: var(--control-height);
   padding: 0.72rem 1rem;
   font-size: 0.95rem;
   line-height: 1.2;
+  text-align: center;
   font-weight: 700;
   cursor: pointer;
   transition: all 220ms var(--ease-smooth);
@@ -431,6 +442,7 @@ textarea:focus-visible {
 
 .product-card h3 {
   margin: var(--space-2) 0 0.35rem;
+  overflow-wrap: anywhere;
 }
 
 .product-card p {
@@ -1246,6 +1258,13 @@ textarea:focus-visible {
   width: min(920px, 100%);
 }
 
+.protected-page .auth-form {
+  width: min(680px, 100%);
+  max-height: none;
+  overflow: visible;
+  margin-inline: auto;
+}
+
 .protected-page .product-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -1469,6 +1488,87 @@ textarea:focus-visible {
   font-weight: 700;
 }
 
+/* Page-specific polish */
+.page-home .hero-section,
+.page-home .promo-banner,
+.page-home .newsletter-box {
+  backdrop-filter: blur(2px);
+}
+
+.page-products .protected-page > h1,
+.page-about .protected-page > h1,
+.page-contact .protected-page > h1,
+.page-product-details .protected-page > h1,
+.page-cart .protected-page > h1,
+.page-wishlist .protected-page > h1,
+.page-checkout .protected-page > h1 {
+  font-size: clamp(1.65rem, 3.2vw, 2.2rem);
+  margin-bottom: 0.25rem;
+}
+
+.page-products .protected-page > p,
+.page-about .protected-page > p,
+.page-contact .protected-page > p,
+.page-product-details .protected-page > p,
+.page-cart .protected-page > p,
+.page-wishlist .protected-page > p,
+.page-checkout .protected-page > p {
+  margin-top: 0;
+  max-width: 66ch;
+  color: #5f5470;
+}
+
+.page-products .catalog-toolbar {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(168, 141, 192, 0.24);
+  border-radius: var(--radius-lg);
+  padding: 0.8rem;
+  box-shadow: 0 8px 22px rgba(60, 47, 79, 0.08);
+}
+
+.page-products .catalog-status {
+  min-height: 1rem;
+}
+
+.page-product-details .product-grid {
+  align-items: stretch;
+}
+
+.page-product-details .product-card:first-child {
+  background: linear-gradient(170deg, rgba(255, 255, 255, 0.94), rgba(246, 235, 249, 0.8));
+}
+
+.page-about .product-card,
+.page-cart .product-card,
+.page-wishlist .product-card,
+.page-checkout .product-card {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.page-contact .auth-form,
+.page-checkout #checkoutForm {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(168, 141, 192, 0.22);
+  box-shadow: 0 14px 28px rgba(63, 48, 82, 0.12);
+}
+
+.page-contact .protected-actions,
+.page-checkout .protected-actions,
+.page-cart .protected-actions,
+.page-wishlist .protected-actions,
+.page-about .protected-actions,
+.page-product-details .protected-actions,
+.page-products .protected-actions {
+  padding-top: 0.2rem;
+  border-top: 1px dashed rgba(168, 141, 192, 0.24);
+}
+
+.page-cart .price-tag,
+.page-checkout .price-tag,
+.page-wishlist .price-tag {
+  font-weight: 800;
+}
+
 @media (max-width: 900px) {
   .hero-section { grid-template-columns: 1fr; }
   .hero-art { min-height: 260px; }
@@ -1494,7 +1594,7 @@ textarea:focus-visible {
 
   .store-nav {
     grid-column: 1 / -1;
-    display: none;
+    display: flex;
     flex-direction: column;
     width: 100%;
     background: rgba(255, 255, 255, 0.92);
@@ -1504,7 +1604,11 @@ textarea:focus-visible {
     justify-content: flex-start;
   }
 
-  .store-nav.is-open {
+  .store-nav.is-collapsible {
+    display: none;
+  }
+
+  .store-nav.is-collapsible.is-open {
     display: flex;
   }
 
@@ -1514,6 +1618,12 @@ textarea:focus-visible {
 
   .header-actions {
     grid-column: 1 / -1;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .header-actions .btn {
+    width: 100%;
   }
 
   .protected-page .product-grid {
@@ -1538,6 +1648,10 @@ textarea:focus-visible {
     padding: 1rem;
   }
 
+  body {
+    background-attachment: scroll;
+  }
+
   .promo-banner,
   .newsletter-box,
   .protected-page {
@@ -1553,6 +1667,36 @@ textarea:focus-visible {
 
   .auth-page {
     padding-inline: 0.8rem;
+  }
+
+  .auth-top-link .btn {
+    width: 100%;
+  }
+
+  .auth-notice {
+    border-radius: var(--radius-lg);
+  }
+
+  .page-products .catalog-toolbar {
+    padding: 0.72rem;
+  }
+
+  .page-products .catalog-sort label {
+    font-size: 0.8rem;
+  }
+
+  .page-contact .auth-form,
+  .page-checkout #checkoutForm {
+    padding: 0.9rem;
+  }
+
+  .protected-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .protected-actions .btn {
+    width: 100%;
   }
 
   .auth-card { min-height: clamp(960px, 98vh, 1080px); }
@@ -1607,10 +1751,48 @@ textarea:focus-visible {
     width: min(1120px, 94vw);
   }
 
+  .brand-link {
+    min-width: 0;
+  }
+
+  .brand-link span {
+    min-width: 0;
+  }
+
   .category-grid,
   .product-grid,
   .gallery-grid { grid-template-columns: 1fr; }
   .newsletter-form { flex-direction: column; }
+
+  .protected-page .auth-form {
+    width: 100%;
+    padding: 0.82rem;
+  }
+
+  .page-products .protected-page > p,
+  .page-about .protected-page > p,
+  .page-contact .protected-page > p,
+  .page-product-details .protected-page > p,
+  .page-cart .protected-page > p,
+  .page-wishlist .protected-page > p,
+  .page-checkout .protected-page > p {
+    max-width: 100%;
+  }
+
+  .page-products .catalog-toolbar {
+    border-radius: var(--radius-md);
+    padding: 0.62rem;
+  }
+
+  .page-contact .protected-actions,
+  .page-checkout .protected-actions,
+  .page-cart .protected-actions,
+  .page-wishlist .protected-actions,
+  .page-about .protected-actions,
+  .page-product-details .protected-actions,
+  .page-products .protected-actions {
+    padding-top: 0.55rem;
+  }
 
   .auth-card { min-height: 1080px; }
 
@@ -1678,6 +1860,21 @@ textarea:focus-visible {
 
   .social-strip {
     margin-top: 0.05rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .header-row {
+    gap: 0.45rem;
+  }
+
+  .menu-toggle {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .catalog-filters {
+    grid-template-columns: 1fr;
   }
 }
 
