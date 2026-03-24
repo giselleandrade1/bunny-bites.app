@@ -33,21 +33,78 @@ const PROTECTED_ROUTES = ["cart.html", "wishlist.html", "checkout.html"];
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const strongPasswordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
-const storageGet = (key) => localStorage.getItem(key) ?? sessionStorage.getItem(key);
+const memoryStorageFallback = new Map();
+
+const safeStorageGet = (storage, key) => {
+    try {
+        return storage.getItem(key);
+    } catch {
+        return null;
+    }
+};
+
+const safeStorageSet = (storage, key, value) => {
+    try {
+        storage.setItem(key, value);
+        return true;
+    } catch {
+        return false;
+    }
+};
+
+const safeStorageRemove = (storage, key) => {
+    try {
+        storage.removeItem(key);
+    } catch {
+        // Ignore storage exceptions and rely on fallback.
+    }
+};
+
+const storageGet = (key) => {
+    const localValue = safeStorageGet(localStorage, key);
+    if (localValue !== null) return localValue;
+
+    const sessionValue = safeStorageGet(sessionStorage, key);
+    if (sessionValue !== null) return sessionValue;
+
+    return memoryStorageFallback.get(key) ?? null;
+};
 
 const storageSet = (key, value, persistent = true) => {
     if (persistent) {
-        localStorage.setItem(key, value);
-        sessionStorage.removeItem(key);
+        if (safeStorageSet(localStorage, key, value)) {
+            safeStorageRemove(sessionStorage, key);
+            memoryStorageFallback.delete(key);
+            return;
+        }
+
+        if (safeStorageSet(sessionStorage, key, value)) {
+            memoryStorageFallback.delete(key);
+            return;
+        }
+
+        memoryStorageFallback.set(key, value);
         return;
     }
-    sessionStorage.setItem(key, value);
-    localStorage.removeItem(key);
+
+    if (safeStorageSet(sessionStorage, key, value)) {
+        safeStorageRemove(localStorage, key);
+        memoryStorageFallback.delete(key);
+        return;
+    }
+
+    if (safeStorageSet(localStorage, key, value)) {
+        memoryStorageFallback.delete(key);
+        return;
+    }
+
+    memoryStorageFallback.set(key, value);
 };
 
 const storageRemove = (key) => {
-    localStorage.removeItem(key);
-    sessionStorage.removeItem(key);
+    safeStorageRemove(localStorage, key);
+    safeStorageRemove(sessionStorage, key);
+    memoryStorageFallback.delete(key);
 };
 
 const isAuthenticated = () => storageGet(AUTH_KEYS.isLoggedIn) === "true";

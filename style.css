@@ -53,6 +53,7 @@ body {
 
 body {
   min-height: 100vh;
+  min-height: 100dvh;
   font-family: "Avenir Next", "Nunito Sans", "Segoe UI", sans-serif;
   font-size: var(--fs-base);
   line-height: var(--lh-base);
@@ -678,6 +679,7 @@ canvas {
   position: relative;
   z-index: 2;
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   align-content: flex-start;
   justify-items: center;
@@ -755,6 +757,7 @@ canvas {
   transform: translateY(0);
   transition: transform 280ms var(--ease-smooth);
   max-height: min(640px, calc(100vh - 180px));
+  max-height: min(640px, calc(100dvh - 180px));
   overflow-y: auto;
   background: rgba(255, 255, 255, 0.86);
   border: 1px solid rgba(170, 139, 196, 0.22);
@@ -1724,6 +1727,7 @@ canvas {
   .auth-form {
     width: min(420px, 100%);
     max-height: min(740px, calc(100vh - 150px));
+    max-height: min(740px, calc(100dvh - 150px));
   }
 
 }
