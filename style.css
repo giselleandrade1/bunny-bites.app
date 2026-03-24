@@ -1699,49 +1699,31 @@ canvas {
     width: 100%;
   }
 
-  .auth-card { min-height: clamp(960px, 98vh, 1080px); }
-  .form-panel { width: 100%; height: 60%; }
+  .auth-card {
+    min-height: clamp(700px, 92vh, 860px);
+    display: flex;
+    align-items: stretch;
+  }
+
+  .forms-zone {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: 100%;
+  }
+
+  .form-panel { width: 100%; height: 100%; }
   .sign-up-panel { transform: translateX(100%); }
   .auth-card.is-sign-up .sign-in-panel { transform: translateX(-100%); }
   .auth-card.is-sign-up .sign-up-panel { transform: translateX(0); }
 
   .overlay-shell {
-    width: 100%;
-    height: 40%;
-    left: 0;
-    top: auto;
-    bottom: 0;
-    border-radius: 26px 26px 0 0;
-    transform: none;
+    display: none;
   }
-
-  .auth-card.is-sign-up .overlay-shell {
-    transform: none;
-    border-radius: 26px 26px 0 0;
-  }
-
-  .overlay-track {
-    left: 0;
-    width: 100%;
-    height: 200%;
-    transform: translateY(0);
-  }
-
-  .auth-card.is-sign-up .overlay-track { transform: translateY(-50%); }
-
-  .overlay-panel {
-    width: 100%;
-    height: 50%;
-    left: 0;
-    transform: none !important;
-  }
-
-  .overlay-left { top: 0; }
-  .overlay-right { top: 50%; }
 
   .auth-form {
     width: min(420px, 100%);
-    max-height: min(740px, calc(100vh - 210px));
+    max-height: min(740px, calc(100vh - 150px));
   }
 
 }
@@ -1794,7 +1776,7 @@ canvas {
     padding-top: 0.55rem;
   }
 
-  .auth-card { min-height: 1080px; }
+  .auth-card { min-height: clamp(680px, 94vh, 820px); }
 
   .protected-page .product-grid {
     grid-template-columns: 1fr;
