@@ -46,6 +46,13 @@ Demonstrate clean, production-minded front-end practices using plain HTML, CSS, 
 
 Default local API URL: http://localhost:4000
 
+## Quality Checks
+
+- Smoke test only:
+  - npm run test:smoke
+- Full predeploy checklist (includes API readiness + smoke test):
+  - npm run test:predeploy
+
 ## Vercel Deployment
 
 This project is configured to deploy on Vercel as:

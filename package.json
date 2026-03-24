@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "node backend/server.js",
-    "start": "node backend/server.js"
+    "start": "node backend/server.js",
+    "test:smoke": "bash test-cart-wishlist.sh",
+    "test:predeploy": "bash scripts/predeploy-check.sh"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
