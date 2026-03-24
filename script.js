@@ -1548,6 +1548,7 @@ const setupAuthForms = () => {
     const authCard = document.getElementById("authCard");
     const showSignUp = document.getElementById("showSignUp");
     const showSignIn = document.getElementById("showSignIn");
+    const modeSwitchButtons = document.querySelectorAll("[data-switch-mode]");
 
     const signInForm = document.getElementById("signInForm");
     const signUpForm = document.getElementById("signUpForm");
@@ -1599,6 +1600,14 @@ const setupAuthForms = () => {
 
     showSignUp?.addEventListener("click", () => toggleMode("signup"));
     showSignIn?.addEventListener("click", () => toggleMode("signin"));
+
+    modeSwitchButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            const mode = button.dataset.switchMode;
+            if (mode !== "signup" && mode !== "signin") return;
+            toggleMode(mode);
+        });
+    });
 
     forgotLink?.addEventListener("click", (event) => {
         event.preventDefault();
