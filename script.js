@@ -15,6 +15,7 @@ const API_CONFIG = {
     toastMaxVisible: Math.max(1, Number(window.BUNNYBITES_TOAST_MAX_VISIBLE) || 3),
     toastDurationMs: Math.max(1200, Number(window.BUNNYBITES_TOAST_DURATION_MS) || 2600),
     toastSwipeThresholdPx: Math.max(40, Number(window.BUNNYBITES_TOAST_SWIPE_THRESHOLD_PX) || 86),
+    requestRetries: Math.max(1, Number(window.BUNNYBITES_API_RETRIES) || 2),
     toastPosition: ["right", "left", "center"].includes(String(window.BUNNYBITES_TOAST_POSITION || "").toLowerCase())
         ? String(window.BUNNYBITES_TOAST_POSITION).toLowerCase()
         : "right",
@@ -259,6 +260,23 @@ const normalizeText = (value = "") => {
         .trim();
 };
 
+const waitFor = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const ensureAuthStateConsistency = () => {
+    const loggedIn = isAuthenticated();
+    const token = storageGet(AUTH_KEYS.authToken);
+    const email = storageGet(AUTH_KEYS.currentUser);
+
+    if (!loggedIn && token && email) {
+        storageSet(AUTH_KEYS.isLoggedIn, "true", true);
+        return;
+    }
+
+    if (loggedIn && !token && !API_CONFIG.allowOfflineFallback) {
+        clearAuthenticatedUser();
+    }
+};
+
 const extractPriceFromText = (text = "") => {
     const match = String(text).match(/(\d+[\.,]\d{2})/);
     if (!match) return 0;
@@ -366,6 +384,11 @@ const setupProtectedActions = () => {
 
     protectedTriggers.forEach((trigger) => {
         trigger.addEventListener("click", async (event) => {
+            if (trigger.dataset.actionPending === "true") {
+                event.preventDefault();
+                return;
+            }
+
             const target = trigger.dataset.protectedTarget;
             const inProductCard = Boolean(trigger.closest(".product-card"));
             const label = (trigger.textContent || "").toLowerCase();
@@ -377,9 +400,33 @@ const setupProtectedActions = () => {
             const productName = trigger.dataset.productName || inferredProduct.name;
             const productPrice = Number(trigger.dataset.productPrice || inferredProduct.price || 0);
 
+            const originalLabel = trigger.dataset.originalLabel || trigger.textContent.trim();
+            trigger.dataset.originalLabel = originalLabel;
+
+            const setPendingState = (pending, pendingLabel = "") => {
+                if (pending) {
+                    trigger.dataset.actionPending = "true";
+                    trigger.setAttribute("aria-busy", "true");
+                    trigger.setAttribute("aria-disabled", "true");
+                    trigger.classList.add("is-busy");
+                    if (pendingLabel) {
+                        trigger.textContent = pendingLabel;
+                    }
+                    return;
+                }
+
+                delete trigger.dataset.actionPending;
+                trigger.removeAttribute("aria-busy");
+                trigger.removeAttribute("aria-disabled");
+                trigger.classList.remove("is-busy");
+                trigger.textContent = originalLabel;
+            };
+
             if (isAddToCartTrigger) {
                 event.preventDefault();
+                setPendingState(true, "Adicionando...");
                 const result = await addToCart(productName, productPrice);
+                setPendingState(false);
                 if (result.ok) {
                     showActionFeedback("Produto adicionado ao carrinho.", "success");
                 } else {
@@ -390,8 +437,15 @@ const setupProtectedActions = () => {
 
             if (isAddToWishlistTrigger) {
                 event.preventDefault();
+                setPendingState(true, "Salvando...");
                 const result = await addToWishlist(productName, productPrice);
-                if (result.ok) {
+                const normalizedMessage = normalizeText(result.message || "");
+                const alreadyAdded = normalizedMessage.includes("ja esta na sua wishlist");
+                setPendingState(false);
+
+                if (result.ok || alreadyAdded) {
+                    trigger.textContent = "Favoritado";
+                    trigger.classList.add("is-complete");
                     showActionFeedback("Produto adicionado a wishlist.", "success");
                 } else {
                     showActionFeedback(result.message || "Nao foi possivel adicionar a wishlist.", "error");
@@ -703,52 +757,64 @@ const requestProtectedApi = async (path, options = {}) => {
         return { ok: false, unauthorized: true, message: "Sessao invalida. Faca login novamente." };
     }
 
-    let timeoutId;
+    let hadTimeout = false;
 
-    try {
-        const controller = new AbortController();
-        timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeoutMs);
+    for (let attempt = 1; attempt <= API_CONFIG.requestRetries; attempt += 1) {
+        let timeoutId;
 
-        const response = await fetch(url, {
-            method: options.method || "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-                ...(options.headers || {})
-            },
-            body: options.body,
-            signal: controller.signal
-        });
+        try {
+            const controller = new AbortController();
+            timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeoutMs);
 
-        const data = await readJsonSafely(response);
+            const response = await fetch(url, {
+                method: options.method || "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                    ...(options.headers || {})
+                },
+                body: options.body,
+                signal: controller.signal
+            });
 
-        if (response.status === 401) {
-            return {
-                ok: false,
-                unauthorized: true,
-                message: data.message || "Sessao expirada. Entre novamente."
-            };
+            const data = await readJsonSafely(response);
+
+            if (response.status === 401) {
+                return {
+                    ok: false,
+                    unauthorized: true,
+                    message: data.message || "Sessao expirada. Entre novamente."
+                };
+            }
+
+            if (!response.ok) {
+                return {
+                    ok: false,
+                    unauthorized: false,
+                    message: data.message || "Nao foi possivel concluir a operacao.",
+                    data
+                };
+            }
+
+            return { ok: true, unauthorized: false, data, message: data.message || "Sucesso." };
+        } catch (error) {
+            hadTimeout = hadTimeout || error?.name === "AbortError";
+            if (attempt >= API_CONFIG.requestRetries) {
+                break;
+            }
+            await waitFor(220 * attempt);
+        } finally {
+            clearTimeout(timeoutId);
         }
-
-        if (!response.ok) {
-            return {
-                ok: false,
-                unauthorized: false,
-                message: data.message || "Nao foi possivel concluir a operacao.",
-                data
-            };
-        }
-
-        return { ok: true, unauthorized: false, data, message: data.message || "Sucesso." };
-    } catch {
-        return {
-            ok: false,
-            unauthorized: false,
-            message: "Falha de conexao com o servidor. Tente novamente."
-        };
-    } finally {
-        clearTimeout(timeoutId);
     }
+
+    return {
+        ok: false,
+        unauthorized: false,
+        message: hadTimeout
+            ? "Servidor demorou para responder. Tente novamente em instantes."
+            : "Falha de conexao com o servidor. Tente novamente."
+    };
 };
 
 const formatCurrencyBRL = (value) => {
@@ -1408,8 +1474,22 @@ const setupCatalog = () => {
         });
     });
 
+    let searchDebounceId;
+
     searchInput?.addEventListener("input", () => {
-        currentQuery = normalizeText(searchInput.value || "");
+        clearTimeout(searchDebounceId);
+        searchDebounceId = setTimeout(() => {
+            currentQuery = normalizeText(searchInput.value || "");
+            currentPage = 1;
+            render();
+        }, 120);
+    });
+
+    searchInput?.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        if (!searchInput.value) return;
+        searchInput.value = "";
+        currentQuery = "";
         currentPage = 1;
         render();
     });
@@ -1547,50 +1627,62 @@ const requestAuthApi = async (path, payload) => {
         return { ok: false, skipped: true };
     }
 
-    let timeoutId;
+    let hadTimeout = false;
 
-    try {
-        const controller = new AbortController();
-        timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeoutMs);
+    for (let attempt = 1; attempt <= API_CONFIG.requestRetries; attempt += 1) {
+        let timeoutId;
 
-        const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-            signal: controller.signal
-        });
-
-        let data = {};
         try {
-            data = await response.json();
-        } catch {
-            data = {};
-        }
+            const controller = new AbortController();
+            timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeoutMs);
 
-        if (!response.ok) {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+                signal: controller.signal
+            });
+
+            let data = {};
+            try {
+                data = await response.json();
+            } catch {
+                data = {};
+            }
+
+            if (!response.ok) {
+                return {
+                    ok: false,
+                    skipped: false,
+                    message: data.message || "Nao foi possivel autenticar no servidor."
+                };
+            }
+
             return {
-                ok: false,
+                ok: true,
                 skipped: false,
-                message: data.message || "Nao foi possivel autenticar no servidor."
+                message: data.message,
+                userEmail: data.email || payload.email,
+                token: data.token || ""
             };
+        } catch (error) {
+            hadTimeout = hadTimeout || error?.name === "AbortError";
+            if (attempt >= API_CONFIG.requestRetries) {
+                break;
+            }
+            await waitFor(260 * attempt);
+        } finally {
+            clearTimeout(timeoutId);
         }
-
-        return {
-            ok: true,
-            skipped: false,
-            message: data.message,
-            userEmail: data.email || payload.email,
-            token: data.token || ""
-        };
-    } catch {
-        return {
-            ok: false,
-            skipped: false,
-            message: "Servidor indisponivel no momento."
-        };
-    } finally {
-        clearTimeout(timeoutId);
     }
+
+    return {
+        ok: false,
+        skipped: false,
+        message: hadTimeout
+            ? "Servidor demorou para responder. Tente novamente em instantes."
+            : "Servidor indisponivel no momento."
+    };
 };
 
 const completeLogin = (email, persistent, token = "") => {
@@ -2124,6 +2216,7 @@ const setupAuthForms = () => {
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
+    ensureAuthStateConsistency();
     setupImageFallbacks();
     ensureSiteChrome();
     guardProtectedPage();
