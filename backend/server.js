@@ -689,6 +689,15 @@ app.post("/api/checkout", requireAuth, async (req, res) => {
     }
 });
 
+const thisFilePath = fileURLToPath(import.meta.url);
+const projectRootPath = path.resolve(path.dirname(thisFilePath), "..");
+
+app.use(express.static(projectRootPath));
+
+app.get("/", (_req, res) => {
+    res.sendFile(path.join(projectRootPath, "index.html"));
+});
+
 const start = async () => {
     await ensureDbReady();
 
@@ -696,8 +705,6 @@ const start = async () => {
         console.log(`Bunny Bites auth API rodando em http://localhost:${PORT}`);
     });
 };
-
-const thisFilePath = fileURLToPath(import.meta.url);
 const isDirectRun = process.argv[1] && path.resolve(process.argv[1]) === thisFilePath;
 
 if (isDirectRun) {
