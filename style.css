@@ -176,6 +176,17 @@ canvas {
   transform: none;
 }
 
+.btn.is-busy {
+  opacity: 0.72;
+  pointer-events: none;
+  transform: none;
+}
+
+.btn.is-complete {
+  border-color: rgba(105, 184, 154, 0.65);
+  background: rgba(105, 184, 154, 0.16);
+}
+
 .btn-soft {
   color: var(--text-strong);
   background: var(--surface-plain);
