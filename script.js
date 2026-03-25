@@ -547,8 +547,6 @@ const ensureSiteChrome = () => {
                     </section>
                 </div>
 
-                <p class="footer-brand-note">A Bunny Bites transforma a Pascoa em uma experiencia delicada, sofisticada e memoravel. Combinamos sabor, cuidado e beleza em cada criacao.</p>
-
                 <p class="footer-decorative-word" aria-hidden="true">BUNNY BITES</p>
 
                 <div class="footer-legal-bar">
