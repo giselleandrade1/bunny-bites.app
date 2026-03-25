@@ -30,6 +30,7 @@ let catalogProductsCache = [];
 const CATALOG_DATA_PATH = "assets/data/products.json";
 
 const PROTECTED_ROUTES = ["cart.html", "wishlist.html", "checkout.html"];
+const THEME_KEY = "themePreference";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const strongPasswordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
@@ -122,6 +123,172 @@ const clearAuthenticatedUser = () => {
     storageRemove(AUTH_KEYS.isLoggedIn);
     storageRemove(AUTH_KEYS.currentUser);
     storageRemove(AUTH_KEYS.authToken);
+};
+
+const getSystemTheme = () => {
+    try {
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    } catch {
+        return "light";
+    }
+};
+
+const resolveTheme = (preference = "system") => {
+    if (preference === "light" || preference === "dark") {
+        return preference;
+    }
+    return getSystemTheme();
+};
+
+const applyThemePreference = (preference = "system") => {
+    const normalizedPreference = ["light", "dark", "system"].includes(preference) ? preference : "system";
+    const resolved = resolveTheme(normalizedPreference);
+    const root = document.documentElement;
+
+    root.dataset.themePreference = normalizedPreference;
+    root.dataset.themeResolved = resolved;
+};
+
+const getStoredThemePreference = () => {
+    const stored = storageGet(THEME_KEY);
+    if (["light", "dark", "system"].includes(stored)) {
+        return stored;
+    }
+    return "system";
+};
+
+const createThemeToggleMarkup = () => {
+    return `
+        <button class="theme-toggle" type="button" aria-label="Alternar tema" data-theme-toggle>
+            <span class="theme-icon theme-icon-light" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                    <circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M12 2.8v2.5M12 18.7v2.5M21.2 12h-2.5M5.3 12H2.8M18.5 5.5l-1.8 1.8M7.3 16.7l-1.8 1.8M18.5 18.5l-1.8-1.8M7.3 7.3L5.5 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+            </span>
+            <span class="theme-icon theme-icon-dark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                    <path d="M15.4 3.6a8.7 8.7 0 1 0 5 15.8 9.5 9.5 0 1 1-5-15.8Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </span>
+            <span class="theme-icon theme-icon-system" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                    <rect x="3.2" y="4.5" width="17.6" height="12.3" rx="2.4" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M8.5 20h7M12 16.9V20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M12 6v9" stroke="currentColor" stroke-width="1.8"/>
+                </svg>
+            </span>
+        </button>
+    `;
+};
+
+const createLoginIconMarkup = () => {
+    return `
+        <a class="header-icon-btn" href="login.html" aria-label="Entrar na conta" title="Entrar">
+            <span class="icon-shell" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" focusable="false">
+                    <path d="M16.5 7.8a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Z" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M4.4 19.2c.6-2.8 3.1-4.7 5.9-4.7h3.4c2.8 0 5.2 1.9 5.9 4.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+            </span>
+        </a>
+    `;
+};
+
+const createMenuIconActionsMarkup = () => {
+    return `
+        <div class="menu-icon-actions" aria-label="Acessos rapidos">
+            <a class="header-icon-btn" href="wishlist.html" data-protected-target="wishlist.html"
+                data-protected-message="Entre na sua conta para ver sua wishlist." aria-label="Wishlist" title="Wishlist">
+                <span class="icon-shell" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" focusable="false">
+                        <path d="M12 4.5a7.5 7.5 0 1 1 0 15 7.5 7.5 0 0 1 0-15Z" stroke="currentColor" stroke-width="1.8"/>
+                        <path d="m12 8.2 1.1 2.2 2.4.3-1.8 1.7.4 2.4-2.1-1.1-2.1 1.1.4-2.4-1.8-1.7 2.4-.3L12 8.2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+            </a>
+
+            <a class="header-icon-btn" href="wishlist.html" data-protected-target="wishlist.html"
+                data-protected-message="Entre na sua conta para acessar seus favoritos." aria-label="Favoritos" title="Favoritos">
+                <span class="icon-shell" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" focusable="false">
+                        <path d="M12 20s-6.2-3.6-8.5-7.3c-2-3.2.2-7.2 3.9-7.2 1.9 0 3.1 1 4.1 2.3 1-1.3 2.2-2.3 4.1-2.3 3.7 0 5.9 4 3.9 7.2C18.2 16.4 12 20 12 20Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+            </a>
+
+            <a class="header-icon-btn" href="cart.html" data-protected-target="cart.html"
+                data-protected-message="Faca login para acessar seu carrinho." aria-label="Carrinho" title="Carrinho">
+                <span class="icon-shell" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" focusable="false">
+                        <path d="M3.8 5.8h2.1l1.5 9.1h8.7l1.7-6.7H7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="10" cy="18.3" r="1.3" fill="currentColor"/>
+                        <circle cx="16.3" cy="18.3" r="1.3" fill="currentColor"/>
+                    </svg>
+                </span>
+            </a>
+        </div>
+    `;
+};
+
+const updateThemeToggleUI = () => {
+    const preference = document.documentElement.dataset.themePreference || "system";
+    const toggles = document.querySelectorAll("[data-theme-toggle]");
+
+    toggles.forEach((toggle) => {
+        toggle.dataset.themeMode = preference;
+        const labelByMode = {
+            light: "Tema claro ativo. Clique para tema escuro.",
+            dark: "Tema escuro ativo. Clique para modo sistema.",
+            system: "Tema sistema ativo. Clique para tema claro."
+        };
+        toggle.setAttribute("aria-label", labelByMode[preference] || "Alternar tema");
+        toggle.setAttribute("title", preference === "system" ? "Tema: sistema" : `Tema: ${preference}`);
+    });
+};
+
+const setupThemeToggle = () => {
+    const headerActions = document.querySelectorAll(".header-actions");
+    headerActions.forEach((actionBar) => {
+        if (!actionBar.querySelector("[data-theme-toggle]")) {
+            actionBar.insertAdjacentHTML("afterbegin", createThemeToggleMarkup());
+        }
+    });
+
+    const nextModeByCurrent = {
+        system: "light",
+        light: "dark",
+        dark: "system"
+    };
+
+    const onToggle = (event) => {
+        const trigger = event.target.closest("[data-theme-toggle]");
+        if (!trigger) return;
+
+        const current = document.documentElement.dataset.themePreference || "system";
+        const next = nextModeByCurrent[current] || "system";
+        storageSet(THEME_KEY, next, true);
+        applyThemePreference(next);
+        updateThemeToggleUI();
+    };
+
+    document.addEventListener("click", onToggle);
+
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const onSystemThemeChange = () => {
+        const preference = document.documentElement.dataset.themePreference || "system";
+        if (preference !== "system") return;
+        applyThemePreference("system");
+        updateThemeToggleUI();
+    };
+
+    if (typeof media.addEventListener === "function") {
+        media.addEventListener("change", onSystemThemeChange);
+    } else if (typeof media.addListener === "function") {
+        media.addListener(onSystemThemeChange);
+    }
+
+    updateThemeToggleUI();
 };
 
 const requireAuthFor = (targetPath, message) => {
@@ -291,9 +458,11 @@ const ensureSiteChrome = () => {
     if (!document.querySelector(".store-header")) {
         const header = document.createElement("header");
         header.className = "store-header";
+        const themeControl = createThemeToggleMarkup();
+        const menuIconActions = createMenuIconActionsMarkup();
         const accountAction = isAuthenticated()
             ? '<a class="btn btn-soft" href="#" data-auth-logout>Sair</a>'
-            : '<a class="btn btn-soft" href="login.html">Entrar</a>';
+            : createLoginIconMarkup();
 
         header.innerHTML = `
             <div class="container header-row">
@@ -314,13 +483,11 @@ const ensureSiteChrome = () => {
                     <a href="product-details.html">Detalhes</a>
                     <a href="about.html">Sobre</a>
                     <a href="contact.html">Contato</a>
-                    <a href="wishlist.html" data-protected-target="wishlist.html"
-                        data-protected-message="Entre na sua conta para salvar favoritos.">Wishlist</a>
-                    <a href="cart.html" data-protected-target="cart.html"
-                        data-protected-message="Faca login para acessar seu carrinho.">Carrinho</a>
                 </nav>
 
                 <div class="header-actions">
+                    ${themeControl}
+                    ${menuIconActions}
                     ${accountAction}
                 </div>
             </div>
@@ -332,12 +499,60 @@ const ensureSiteChrome = () => {
         const footer = document.createElement("footer");
         footer.className = "store-footer";
         footer.innerHTML = `
-            <div class="container footer-row">
-                <p>© 2026 Bunny Bites. Todos os direitos reservados.</p>
-                <div class="footer-links">
-                    <a href="about.html">Sobre</a>
-                    <a href="contact.html">Contato</a>
-                    <a href="login.html">Minha conta</a>
+            <div class="container footer-shell">
+                <div class="footer-grid" role="navigation" aria-label="Links do rodape">
+                    <section class="footer-column" aria-labelledby="footer-quick-links">
+                        <h3 id="footer-quick-links">Links Rapidos</h3>
+                        <a href="index.html">Home</a>
+                        <a href="products.html">Produtos</a>
+                        <a href="products.html#categorias">Categorias</a>
+                        <a href="products.html#ofertas">Ofertas</a>
+                        <a href="about.html">Sobre Nos</a>
+                        <a href="contact.html">Contato</a>
+                    </section>
+
+                    <section class="footer-column" aria-labelledby="footer-shop-links">
+                        <h3 id="footer-shop-links">Loja</h3>
+                        <a href="products.html">Ovos de Pascoa</a>
+                        <a href="products.html">Presentes de Chocolate</a>
+                        <a href="products.html">Trufas</a>
+                        <a href="products.html">Brownies</a>
+                        <a href="products.html">Cestas Presenteaveis</a>
+                        <a href="products.html">Edicoes Especiais</a>
+                    </section>
+
+                    <section class="footer-column" aria-labelledby="footer-support-links">
+                        <h3 id="footer-support-links">Suporte</h3>
+                        <a href="contact.html">Central de Ajuda</a>
+                        <a href="contact.html">Perguntas Frequentes</a>
+                        <a href="contact.html">Politica de Entrega</a>
+                        <a href="contact.html">Politica de Troca</a>
+                        <a href="contact.html">Termos e Condicoes</a>
+                        <a href="contact.html">Politica de Privacidade</a>
+                    </section>
+
+                    <section class="footer-column" aria-labelledby="footer-social-links">
+                        <h3 id="footer-social-links">Redes Sociais</h3>
+                        <a href="#" aria-label="Instagram Bunny Bites"><span class="footer-social-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><rect x="3.6" y="3.6" width="16.8" height="16.8" rx="4.8" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/><circle cx="17.3" cy="6.9" r="1" fill="currentColor"/></svg></span>Instagram</a>
+                        <a href="#" aria-label="Pinterest Bunny Bites"><span class="footer-social-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><circle cx="12" cy="12" r="8.7" stroke="currentColor" stroke-width="1.8"/><path d="M10.1 20.3l1.2-4.6m1.3-4.5c0 1.4-1 2.4-2.2 2.4s-2.1-1-2.1-2.3c0-2.4 2.4-4 4.9-3.7 2.6.3 4.2 2.3 4.2 4.7 0 2.8-1.6 4.8-4.1 4.8-1 0-1.9-.5-2.2-1.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Pinterest</a>
+                        <a href="#" aria-label="TikTok Bunny Bites"><span class="footer-social-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M14.2 5.1c.7 1.1 1.8 1.8 3.2 2v2.4a5.8 5.8 0 0 1-3.2-1V14c0 2.8-1.8 4.8-4.5 4.8a4.5 4.5 0 1 1 0-9c.4 0 .8.1 1.2.2v2.5a2.4 2.4 0 1 0 1.3 2.2V5.1h2Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>TikTok</a>
+                        <a href="#" aria-label="WhatsApp Bunny Bites"><span class="footer-social-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M12 3.4a8.8 8.8 0 0 0-7.6 13.2l-1 4 4.1-1a8.8 8.8 0 1 0 4.5-16.2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.4 9.2c.2-.5.5-.5.8-.5h.6c.2 0 .4 0 .5.4l.6 1.5c.1.2 0 .4-.1.5l-.5.6c-.1.1-.2.3 0 .6.2.4.7 1.3 1.7 2 .9.6 1.3.6 1.6.5l.7-.8c.2-.2.3-.2.6-.1l1.4.7c.2.1.4.3.3.5l-.3 1c-.1.3-.4.6-.8.7-.6.2-1.4.3-2.8-.2-1.7-.7-3.7-2.5-4.2-4.3-.4-1.6-.1-2.3-.1-2.4Z" fill="currentColor"/></svg></span>WhatsApp</a>
+                    </section>
+
+                    <section class="footer-column" aria-labelledby="footer-contact-links">
+                        <h3 id="footer-contact-links">Fale Conosco</h3>
+                        <a href="mailto:contact@bunnybites.com">contact@bunnybites.com</a>
+                        <p>Sao Paulo, Brasil</p>
+                        <a href="tel:+5511999999999">+55 (11) 99999-9999</a>
+                    </section>
+                </div>
+
+                <p class="footer-brand-note">A Bunny Bites transforma a Pascoa em uma experiencia delicada, sofisticada e memoravel. Combinamos sabor, cuidado e beleza em cada criacao.</p>
+
+                <p class="footer-decorative-word" aria-hidden="true">BUNNY BITES</p>
+
+                <div class="footer-legal-bar">
+                    <p>© 2026 Bunny Bites - Desenvolvido por @giselleandrade1. Todos os direitos reservados.</p>
                 </div>
             </div>
         `;
@@ -2216,9 +2431,11 @@ const setupAuthForms = () => {
 };
 
 document.addEventListener("DOMContentLoaded", async () => {
+    applyThemePreference(getStoredThemePreference());
     ensureAuthStateConsistency();
     setupImageFallbacks();
     ensureSiteChrome();
+    setupThemeToggle();
     guardProtectedPage();
     await hydrateCatalogGridFromData();
     setupCatalog();
